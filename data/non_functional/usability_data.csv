@@ -1,0 +1,3 @@
+tc_id,metric,input_value,expected_result
+TC001,error_message_visibility,login_form,Errors are clear
+TC002,form_label_clarity,create_course,Labels are clear

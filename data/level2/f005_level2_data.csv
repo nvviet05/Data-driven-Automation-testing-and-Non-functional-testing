@@ -1,0 +1,3 @@
+tc_id,step_id,page_url,locator_type,locator_value,action_type,input_value,expected_result
+TC001,1,/enrol/users.php,,,open,,
+TC001,2,,css,.page-header,verify_text,,Enrolled users

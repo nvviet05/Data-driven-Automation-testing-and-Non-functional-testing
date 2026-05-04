@@ -1,0 +1,3 @@
+tc_id,description,input_value,expected_result
+TC001,Change password with valid data,new_password=NewPass123,Password updated
+TC002,Change password mismatch,new_password=Mismatch123,Password not updated

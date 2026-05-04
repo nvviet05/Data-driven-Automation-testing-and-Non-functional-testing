@@ -1,0 +1,3 @@
+tc_id,description,input_value,expected_result
+TC001,Create assignment with valid title,assignment_title=Assignment 1,Assignment created
+TC002,Create assignment with empty title,assignment_title=,Validation error

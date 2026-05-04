@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+venv/
+env/
+results/**/*.csv
+screenshots/**/*.png
+screenshots/**/*.jpg
+logs/*.log

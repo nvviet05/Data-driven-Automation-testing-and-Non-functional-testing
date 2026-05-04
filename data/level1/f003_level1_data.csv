@@ -1,0 +1,3 @@
+tc_id,description,input_value,expected_result
+TC001,Create quiz with valid name,quiz_name=Quiz 1,Quiz created
+TC002,Create quiz with empty name,quiz_name=,Validation error

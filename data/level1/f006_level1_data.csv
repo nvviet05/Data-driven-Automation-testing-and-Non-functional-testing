@@ -1,0 +1,3 @@
+tc_id,description,input_value,expected_result
+TC001,Submit assignment file,submission=sample.pdf,Submission successful
+TC002,Submit without file,submission=,Submission error

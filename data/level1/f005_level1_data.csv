@@ -1,0 +1,3 @@
+tc_id,description,input_value,expected_result
+TC001,Enroll user to course,username=demo_user,Enrollment successful
+TC002,Enroll missing user,username=unknown_user,Enrollment failed

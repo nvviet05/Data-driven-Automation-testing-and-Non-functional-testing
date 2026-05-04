@@ -1,0 +1,3 @@
+tc_id,metric,input_value,expected_result
+TC001,unauthorized_access,admin_page,Access denied
+TC002,invalid_login,login_form,Login blocked

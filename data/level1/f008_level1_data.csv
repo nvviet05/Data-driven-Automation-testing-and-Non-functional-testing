@@ -1,0 +1,3 @@
+tc_id,description,input_value,expected_result
+TC001,Create event with valid data,event_name=Team Meeting,Event created
+TC002,Create event without name,event_name=,Validation error

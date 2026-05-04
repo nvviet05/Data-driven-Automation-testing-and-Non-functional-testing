@@ -1,0 +1,3 @@
+tc_id,description,input_value,expected_result
+TC001,Create course with valid name,course_name=Course 101,Course created
+TC002,Create course with empty name,course_name=,Validation error

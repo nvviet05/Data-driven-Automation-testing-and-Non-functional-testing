@@ -1,0 +1,3 @@
+tc_id,description,input_value,expected_result
+TC001,Add user with valid data,username=demo_user,User created
+TC002,Add user with missing email,username=missing_email,Validation error

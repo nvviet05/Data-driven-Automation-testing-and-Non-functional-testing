@@ -1,0 +1,3 @@
+tc_id,metric,input_value,expected_result
+TC001,repeat_login,5 cycles,No errors
+TC002,repeat_navigation,10 pages,No errors
