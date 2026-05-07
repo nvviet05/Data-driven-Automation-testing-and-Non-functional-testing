@@ -2,11 +2,23 @@
 
 Run scripts from the repository root so relative paths resolve correctly.
 
+## Google Sheets Source of Truth
+
+The shared Google Sheets workbook has only five tabs, not one tab per feature:
+
+- `TC_Inventory`
+- `Level1_Data`
+- `Level2_Locators_Data`
+- `Execution_Results`
+- `Non_Functional_Testing`
+
+Use Google Sheets as the working source of truth during team collaboration. Before submission, export the relevant rows into CSV files under the `data/` folder.
+
 ## Level 1 CSV Files
 
 Location: `data/level1/*.csv`
 
-Level 1 uses one CSV row per test case. Fill input values and expected results for the feature script. The Python script keeps the workflow logic, so the CSV should focus on data such as names, dates, roles, file names, passwords, and expected messages.
+Level 1 uses one CSV row per test case. Fill input values and expected results for the feature script. The Python script keeps the workflow logic, so the CSV should focus on data such as names, dates, roles, file names, passwords, and expected messages. Export the relevant `Level1_Data` rows into the matching `data/level1/*.csv` file for each feature.
 
 Minimum guidance:
 
@@ -19,7 +31,7 @@ Minimum guidance:
 
 Location: `data/level2/*.csv`
 
-Level 2 uses one CSV row per action step. Fill:
+Level 2 uses one CSV row per action step. Export the relevant `Level2_Locators_Data` rows into the matching `data/level2/*.csv` file for each feature. Fill:
 
 - `page_url`: page to open, either relative to `BASE_URL` or a full Moodle URL.
 - `locator_type`: Selenium locator strategy such as `id`, `name`, `css`, or `xpath`.
@@ -33,6 +45,8 @@ Keep Level 2 steps in execution order for each `tc_id`.
 ## Non-Functional CSV Files
 
 Location: `data/non_functional/*.csv`
+
+Export the relevant rows from `Non_Functional_Testing` into the matching script-specific CSV file under `data/non_functional/`.
 
 Required columns:
 
@@ -54,7 +68,7 @@ Rules:
 
 - Create one `run_id` per script execution with `uuid.uuid4()`.
 - Create `run_date` with `datetime.now().isoformat(timespec="seconds")`.
-- Append result rows to `results/non_functional/*.csv`.
+- Append result rows to `results/non_functional/<script_specific_name>_results.csv`.
 - Use `PASS`, `FAIL`, or `ERROR` for `status`.
 - Put exception text in `error_message` for `ERROR`.
 

@@ -15,16 +15,16 @@ Group 15 tests Moodle Sandbox for Project #3 using Python Selenium. The target i
 
 ## Non-Functional Testing Allocation
 
-| Member | Feature | NFR type | Requirement | Data file | Script |
-| --- | --- | --- | --- | --- | --- |
-| Nguyen Van Viet | F003 | Performance | Quiz creation workflow should complete within an acceptable response time. | `data/non_functional/f003_quiz_performance_data.csv` | `non_functional/f003_quiz_performance_test.py` |
-| Nguyen Van Viet | F008 | Reliability | Calendar event creation should remain stable across repeated automation runs. | `data/non_functional/f008_event_reliability_data.csv` | `non_functional/f008_event_reliability_test.py` |
-| Nguyen Gia Hoang | F001/F007 | Security | Password field masking and password policy enforcement. | `data/non_functional/f001_f007_security_data.csv` | `non_functional/f001_f007_security_test.py` |
-| Nguyen Gia Hoang | F001 | Usability | Account form validation feedback. | `data/non_functional/f001_account_usability_data.csv` | `non_functional/f001_account_usability_test.py` |
-| Do Thanh Dat | F002/F005 | Usability | Form validation feedback and input preservation. | `data/non_functional/f002_f005_usability_data.csv` | `non_functional/f002_f005_usability_test.py` |
-| Do Thanh Dat | F002/F005 | Data integrity | Workflow state consistency. | `data/non_functional/f002_f005_data_integrity_data.csv` | `non_functional/f002_f005_data_integrity_test.py` |
-| Vo Cao Nhat Minh | F004 | Usability | Assignment validation and recovery. | `data/non_functional/f004_assignment_usability_data.csv` | `non_functional/f004_assignment_usability_test.py` |
-| Vo Cao Nhat Minh | F006 | Performance | File upload response time. | `data/non_functional/f006_upload_performance_data.csv` | `non_functional/f006_upload_performance_test.py` |
+| Member | Feature | NFR type | Requirement | Data file | Script | Result/evidence file |
+| --- | --- | --- | --- | --- | --- | --- |
+| Nguyen Van Viet | F003 Create Quiz | Performance | Quiz creation workflow should complete within an acceptable response time. | `data/non_functional/f003_quiz_performance_data.csv` | `non_functional/f003_quiz_performance_test.py` | `results/non_functional/f003_quiz_performance_results.csv` |
+| Nguyen Van Viet | F008 Create Calendar Event | Reliability | Calendar event creation should remain stable across repeated automation runs. | `data/non_functional/f008_event_reliability_data.csv` | `non_functional/f008_event_reliability_test.py` | `results/non_functional/f008_event_reliability_results.csv` |
+| Nguyen Gia Hoang | F001/F007 Add User + Change Password | Security | Password field masking and password policy enforcement. | `data/non_functional/f001_f007_security_data.csv` | `non_functional/f001_f007_security_test.py` | `results/non_functional/f001_f007_security_results.csv` |
+| Nguyen Gia Hoang | F001 Add New User | Usability | Account form validation feedback. | `data/non_functional/f001_account_usability_data.csv` | `non_functional/f001_account_usability_test.py` | `results/non_functional/f001_account_usability_results.csv` |
+| Do Thanh Dat | F002/F005 Create Course + Enroll Users | Usability | Form validation feedback and input preservation. | `data/non_functional/f002_f005_usability_data.csv` | `non_functional/f002_f005_usability_test.py` | `results/non_functional/f002_f005_usability_results.csv` |
+| Do Thanh Dat | F002/F005 Create Course + Enroll Users | Data integrity | Workflow state consistency. | `data/non_functional/f002_f005_data_integrity_data.csv` | `non_functional/f002_f005_data_integrity_test.py` | `results/non_functional/f002_f005_data_integrity_results.csv` |
+| Vo Cao Nhat Minh | F004 Create Assignment | Usability | Assignment validation and recovery. | `data/non_functional/f004_assignment_usability_data.csv` | `non_functional/f004_assignment_usability_test.py` | `results/non_functional/f004_assignment_usability_results.csv` |
+| Vo Cao Nhat Minh | F006 Submit Assignment | Performance | File upload response time. | `data/non_functional/f006_upload_performance_data.csv` | `non_functional/f006_upload_performance_test.py` | `results/non_functional/f006_upload_performance_results.csv` |
 
 ## Per-Member Deliverables
 
@@ -37,17 +37,11 @@ Group 15 tests Moodle Sandbox for Project #3 using Python Selenium. The target i
 
 ## Shared Google Sheets Tabs
 
-- `level1_f001` to `level1_f008`
-- `level2_f001` to `level2_f008`
-- `nfr_f003_quiz_performance`
-- `nfr_f008_event_reliability`
-- `nfr_f001_f007_security`
-- `nfr_f001_account_usability`
-- `nfr_f002_f005_usability`
-- `nfr_f002_f005_data_integrity`
-- `nfr_f004_assignment_usability`
-- `nfr_f006_upload_performance`
-- `execution_summary`
+- `TC_Inventory`
+- `Level1_Data`
+- `Level2_Locators_Data`
+- `Execution_Results`
+- `Non_Functional_Testing`
 
 ## Team Handoff Checklist
 

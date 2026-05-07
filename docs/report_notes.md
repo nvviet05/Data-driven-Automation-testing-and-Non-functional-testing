@@ -38,6 +38,19 @@ Explain that Level 2 reads URL, locator, action type, input value, and expected 
 
 Describe the eight assigned NFR tests, their metrics, thresholds, and result CSV outputs.
 
+Use this table template in the report:
+
+| Member | Feature | Type | Requirement | Tool | Metric | Expected Result | Actual Result | Status | Evidence File |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Nguyen Van Viet | F003 Create Quiz | Performance | Quiz creation workflow response time | Python Selenium | page_load_seconds; submission_seconds; average_seconds | average_seconds <= 8 |  |  | `results/non_functional/f003_quiz_performance_results.csv` |
+| Nguyen Van Viet | F008 Create Calendar Event | Reliability | Calendar event creation repeated-run stability | Python Selenium | pass_rate; failure_count | pass_rate = 100% |  |  | `results/non_functional/f008_event_reliability_results.csv` |
+| Nguyen Gia Hoang | F001/F007 Add User + Change Password | Security | Password field masking and password policy enforcement. | Python Selenium | field_type; validation_result | password field masked and weak/mismatched passwords rejected |  |  | `results/non_functional/f001_f007_security_results.csv` |
+| Nguyen Gia Hoang | F001 Add New User | Usability | Account form validation feedback. | Python Selenium | message_visibility; message_text | clear validation message displayed |  |  | `results/non_functional/f001_account_usability_results.csv` |
+| Do Thanh Dat | F002/F005 Create Course + Enroll Users | Usability | Form validation feedback and input preservation. | Python Selenium | message_visibility; input_preservation | validation messages visible and valid inputs preserved |  |  | `results/non_functional/f002_f005_usability_results.csv` |
+| Do Thanh Dat | F002/F005 Create Course + Enroll Users | Data integrity | Workflow state consistency. | Python Selenium | state_consistency; record_consistency | final UI state matches selected data and expected role/status |  |  | `results/non_functional/f002_f005_data_integrity_results.csv` |
+| Vo Cao Nhat Minh | F004 Create Assignment | Usability | Assignment validation and recovery. | Python Selenium | message_visibility; recovery_success | clear validation messages shown and corrected submission succeeds |  |  | `results/non_functional/f004_assignment_usability_results.csv` |
+| Vo Cao Nhat Minh | F006 Submit Assignment | Performance | File upload response time. | Python Selenium | upload_time_seconds; average_seconds | average upload/submission time <= 10 seconds for small file |  |  | `results/non_functional/f006_upload_performance_results.csv` |
+
 ### 7. Execution Results
 
 Summarize pass/fail/error counts, attach or reference generated CSV files, and include screenshot evidence for failed cases.
