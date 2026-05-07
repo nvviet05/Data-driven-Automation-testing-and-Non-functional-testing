@@ -15,13 +15,14 @@ RESULT_COLUMNS = [
 ]
 
 
-def write_results(file_path: str, rows: list[dict]) -> None:
+def write_results(file_path: str, rows: list[dict], fieldnames: list[str] | None = None) -> None:
+    columns = fieldnames or RESULT_COLUMNS
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     file_exists = os.path.exists(file_path)
 
     with open(file_path, "a", newline="", encoding="utf-8") as file_handle:
-        writer = csv.DictWriter(file_handle, fieldnames=RESULT_COLUMNS)
+        writer = csv.DictWriter(file_handle, fieldnames=columns)
         if not file_exists:
             writer.writeheader()
         for row in rows:
-            writer.writerow({col: row.get(col, "") for col in RESULT_COLUMNS})
+            writer.writerow({col: row.get(col, "") for col in columns})
