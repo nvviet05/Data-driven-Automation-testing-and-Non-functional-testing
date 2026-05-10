@@ -1,3 +1,9 @@
-tc_id,description,input_value,expected_result
-TC001,Create event with valid data,event_name=Team Meeting,Event created
-TC002,Create event without name,event_name=,Validation error
+tc_id,feature_id,owner,test_description,pre_condition,event_title,event_date,event_time,event_duration,event_type,expected_result,expected_message,should_pass,notes
+F008-L1-001,F008,Nguyen Van Viet,Valid event creation with all fields,Logged in,Event Valid Test,FUTURE_DATE,10:00,60,user,Event created,,TRUE,Standard valid event
+F008-L1-002,F008,Nguyen Van Viet,Empty event title should fail validation,Logged in,,FUTURE_DATE,10:00,60,user,Validation error,required,FALSE,Title is mandatory
+F008-L1-003,F008,Nguyen Van Viet,Boundary duration of 1 minute,Logged in,Event Min Duration,FUTURE_DATE,14:00,1,user,Event created,,TRUE,Minimum valid duration
+F008-L1-004,F008,Nguyen Van Viet,Invalid duration value zero,Logged in,Event Zero Duration,FUTURE_DATE,09:00,0,user,Validation error,,FALSE,Duration zero is invalid
+F008-L1-005,F008,Nguyen Van Viet,Event with long title boundary,Logged in,This Is A Very Long Event Title For Boundary Testing Purposes Only,FUTURE_DATE,11:00,30,user,Event created,,TRUE,Long title boundary
+F008-L1-006,F008,Nguyen Van Viet,Event with site event type,Logged in,Site Level Event,FUTURE_DATE,08:00,120,site,Event created,,TRUE,Site-level event type
+F008-L1-007,F008,Nguyen Van Viet,Event with course event type,Logged in,Course Level Event,FUTURE_DATE,15:00,45,course,Event created,,TRUE,Course-level event type
+F008-L1-008,F008,Nguyen Van Viet,Event at midnight time,Logged in,Midnight Event,FUTURE_DATE,00:00,60,user,Event created,,TRUE,Midnight edge case

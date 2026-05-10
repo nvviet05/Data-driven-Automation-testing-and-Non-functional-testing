@@ -105,3 +105,53 @@ Before final demo:
 - Create local `.env` from `.env.example`.
 - Confirm Chrome and ChromeDriver are available for Selenium.
 - Replace placeholder Moodle locators and test data.
+
+## Nguyen Van Viet End-to-End Workflow
+
+### Features
+
+- **F003** — Create Quiz
+- **F008** — Create Calendar Event
+
+### Running Commands
+
+Run all scripts from the repository root:
+
+```bash
+# Level 1 — Data-driven automation
+python -m level1.f008_create_event_level1
+python -m level1.f003_create_quiz_level1
+
+# Non-functional tests
+python -m non_functional.f008_event_reliability_test
+python -m non_functional.f003_quiz_performance_test
+
+# Level 2 — Generic step-driven automation
+python -m level2.f008_create_event_level2
+python -m level2.f003_create_quiz_level2
+```
+
+### Expected Output Files
+
+```text
+results/level1/f008_level1_results.csv
+results/level1/f003_level1_results.csv
+results/non_functional/f008_event_reliability_results.csv
+results/non_functional/f003_quiz_performance_results.csv
+results/level2/f008_level2_results.csv
+results/level2/f003_level2_results.csv
+```
+
+### Screenshot Evidence
+
+Screenshots on FAIL or ERROR are saved under:
+
+```text
+screenshots/level1/
+screenshots/non_functional/
+screenshots/level2/
+```
+
+### Before Final Run
+
+Replace `TODO_LOCATOR` and `TODO_TEST_DATA` with verified Moodle Sandbox locators and safe test data before final execution. Check all CSV files under `data/` for placeholder values.
