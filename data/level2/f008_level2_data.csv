@@ -1,23 +1,28 @@
 tc_id,feature_id,owner,page_url,step_id,element_role,locator_type,locator_value,action_type,input_value,expected_locator_type,expected_locator_value,expected_result,script_file,notes
 F008-L2-001,F008,Nguyen Van Viet,/login/index.php,1,login_page,,,open,,,,OPENED,f008_create_event_level2.py,Open Moodle login page
-F008-L2-001,F008,Nguyen Van Viet,,2,username_field,id,username,type,TODO_TEST_DATA,,,TYPED,f008_create_event_level2.py,Enter username
-F008-L2-001,F008,Nguyen Van Viet,,3,password_field,id,password,type,TODO_TEST_DATA,,,TYPED,f008_create_event_level2.py,Enter password
+F008-L2-001,F008,Nguyen Van Viet,,2,username_field,id,username,type,TODO_TEST_DATA,,,TYPED,f008_create_event_level2.py,Enter username from .env
+F008-L2-001,F008,Nguyen Van Viet,,3,password_field,id,password,type,TODO_TEST_DATA,,,TYPED,f008_create_event_level2.py,Enter password from .env
 F008-L2-001,F008,Nguyen Van Viet,,4,login_button,id,loginbtn,click,,,,CLICKED,f008_create_event_level2.py,Click login button
-F008-L2-001,F008,Nguyen Van Viet,,5,logged_in_check,css,body.loggedin,wait,,,,WAITED,f008_create_event_level2.py,Wait for logged in state
-F008-L2-001,F008,Nguyen Van Viet,/calendar/view.php,6,calendar_page,,,open,,,,OPENED,f008_create_event_level2.py,Open calendar page
-F008-L2-001,F008,Nguyen Van Viet,,7,new_event_button,css,TODO_LOCATOR,click,,,,CLICKED,f008_create_event_level2.py,TODO: Click new event button
-F008-L2-001,F008,Nguyen Van Viet,,8,event_modal,css,TODO_LOCATOR,wait,,,,WAITED,f008_create_event_level2.py,TODO: Wait for event form modal
-F008-L2-001,F008,Nguyen Van Viet,,9,event_title_input,id,id_name,type,Test Event L2,,,TYPED,f008_create_event_level2.py,Type event title
-F008-L2-001,F008,Nguyen Van Viet,,10,save_button,id,TODO_LOCATOR,click,,,,CLICKED,f008_create_event_level2.py,TODO: Click save button
-F008-L2-001,F008,Nguyen Van Viet,,11,success_verify,css,TODO_LOCATOR,verify_visible,,,,VISIBLE,f008_create_event_level2.py,TODO: Verify event created
+F008-L2-001,F008,Nguyen Van Viet,,5,logged_in_check,css,#page-my-index; .usermenu; body.loggedin,wait,,,,WAITED,f008_create_event_level2.py,Wait for logged in state
+F008-L2-001,F008,Nguyen Van Viet,/calendar/view.php?view=month,6,calendar_page,,,open,,,,OPENED,f008_create_event_level2.py,Open calendar month view
+F008-L2-001,F008,Nguyen Van Viet,,7,calendar_wait,css,#page-calendar-view; .calendartable; .calendarwrapper,wait,,,,WAITED,f008_create_event_level2.py,Wait for calendar to load
+F008-L2-001,F008,Nguyen Van Viet,,8,new_event_button,xpath,//button[contains(.:'New event')] | //a[contains(.:'New event')],click,,,,CLICKED,f008_create_event_level2.py,Click New event button
+F008-L2-001,F008,Nguyen Van Viet,,9,modal_wait,css,.modal.show form; #id_name,wait,,,,WAITED,f008_create_event_level2.py,Wait for event modal form
+F008-L2-001,F008,Nguyen Van Viet,,10,event_title_input,id,id_name,type,Test Event L2 Valid,,,TYPED,f008_create_event_level2.py,Type event title
+F008-L2-001,F008,Nguyen Van Viet,,11,event_type_select,id,id_eventtype,select,User,,,SELECTED,f008_create_event_level2.py,Select User event type
+F008-L2-001,F008,Nguyen Van Viet,,12,save_button,xpath,//div[contains(@class:'modal') and contains(@class:'show')]//button[normalize-space()='Save'],click,,,,CLICKED,f008_create_event_level2.py,Click Save in modal
+F008-L2-001,F008,Nguyen Van Viet,/calendar/view.php?view=upcoming,13,upcoming_page,,,open,,,,OPENED,f008_create_event_level2.py,Open upcoming events to verify
+F008-L2-001,F008,Nguyen Van Viet,,14,success_verify,xpath,//*[contains(normalize-space(.):'Test Event L2 Valid')],verify_visible,,,,VISIBLE,f008_create_event_level2.py,Verify event in upcoming view
 F008-L2-002,F008,Nguyen Van Viet,/login/index.php,1,login_page,,,open,,,,OPENED,f008_create_event_level2.py,Open Moodle login page
-F008-L2-002,F008,Nguyen Van Viet,,2,username_field,id,username,type,TODO_TEST_DATA,,,TYPED,f008_create_event_level2.py,Enter username
-F008-L2-002,F008,Nguyen Van Viet,,3,password_field,id,password,type,TODO_TEST_DATA,,,TYPED,f008_create_event_level2.py,Enter password
+F008-L2-002,F008,Nguyen Van Viet,,2,username_field,id,username,type,TODO_TEST_DATA,,,TYPED,f008_create_event_level2.py,Enter username from .env
+F008-L2-002,F008,Nguyen Van Viet,,3,password_field,id,password,type,TODO_TEST_DATA,,,TYPED,f008_create_event_level2.py,Enter password from .env
 F008-L2-002,F008,Nguyen Van Viet,,4,login_button,id,loginbtn,click,,,,CLICKED,f008_create_event_level2.py,Click login button
-F008-L2-002,F008,Nguyen Van Viet,,5,logged_in_check,css,body.loggedin,wait,,,,WAITED,f008_create_event_level2.py,Wait for logged in state
-F008-L2-002,F008,Nguyen Van Viet,/calendar/view.php,6,calendar_page,,,open,,,,OPENED,f008_create_event_level2.py,Open calendar page
-F008-L2-002,F008,Nguyen Van Viet,,7,new_event_button,css,TODO_LOCATOR,click,,,,CLICKED,f008_create_event_level2.py,TODO: Click new event button
-F008-L2-002,F008,Nguyen Van Viet,,8,event_modal,css,TODO_LOCATOR,wait,,,,WAITED,f008_create_event_level2.py,TODO: Wait for event form modal
-F008-L2-002,F008,Nguyen Van Viet,,9,event_title_input,id,id_name,type,,,,TYPED,f008_create_event_level2.py,Leave event title empty for negative test
-F008-L2-002,F008,Nguyen Van Viet,,10,save_button,id,TODO_LOCATOR,click,,,,CLICKED,f008_create_event_level2.py,TODO: Click save button
-F008-L2-002,F008,Nguyen Van Viet,,11,error_verify,css,TODO_LOCATOR,verify_visible,,,,VISIBLE,f008_create_event_level2.py,TODO: Verify validation error shown
+F008-L2-002,F008,Nguyen Van Viet,,5,logged_in_check,css,#page-my-index; .usermenu; body.loggedin,wait,,,,WAITED,f008_create_event_level2.py,Wait for logged in state
+F008-L2-002,F008,Nguyen Van Viet,/calendar/view.php?view=month,6,calendar_page,,,open,,,,OPENED,f008_create_event_level2.py,Open calendar month view
+F008-L2-002,F008,Nguyen Van Viet,,7,calendar_wait,css,#page-calendar-view; .calendartable; .calendarwrapper,wait,,,,WAITED,f008_create_event_level2.py,Wait for calendar to load
+F008-L2-002,F008,Nguyen Van Viet,,8,new_event_button,xpath,//button[contains(.:'New event')] | //a[contains(.:'New event')],click,,,,CLICKED,f008_create_event_level2.py,Click New event button
+F008-L2-002,F008,Nguyen Van Viet,,9,modal_wait,css,.modal.show form; #id_name,wait,,,,WAITED,f008_create_event_level2.py,Wait for event modal form
+F008-L2-002,F008,Nguyen Van Viet,,10,event_title_input,id,id_name,type,,,,TYPED,f008_create_event_level2.py,Leave event title empty for negative test
+F008-L2-002,F008,Nguyen Van Viet,,11,event_type_select,id,id_eventtype,select,User,,,SELECTED,f008_create_event_level2.py,Select User event type
+F008-L2-002,F008,Nguyen Van Viet,,12,save_button,xpath,//div[contains(@class:'modal') and contains(@class:'show')]//button[normalize-space()='Save'],click,,,,CLICKED,f008_create_event_level2.py,Click Save in modal
+F008-L2-002,F008,Nguyen Van Viet,,13,error_verify,css,#id_error_name; .invalid-feedback; .error,verify_visible,,,,VISIBLE,f008_create_event_level2.py,Verify validation error shown

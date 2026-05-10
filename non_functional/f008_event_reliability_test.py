@@ -1,8 +1,13 @@
 """F008 Reliability NFR: Repeated calendar event creation stability test."""
 
 import os
+import time
 import uuid
 from datetime import datetime
+
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select, WebDriverWait
 
 from common.browser import close_driver, create_driver
 from common.csv_reader import read_csv
@@ -32,41 +37,78 @@ NFR_RESULT_COLUMNS = [
     "error_message",
 ]
 
+# Locators from Katalon recordings
+CALENDAR_URL_PATH = "/calendar/view.php?view=month"
+CALENDAR_UPCOMING_PATH = "/calendar/view.php?view=upcoming"
+CALENDAR_WAIT_CSS = "#page-calendar-view, .calendartable, .calendarwrapper"
+NEW_EVENT_XPATH = "//button[contains(.,'New event')] | //a[contains(.,'New event')]"
+MODAL_FORM_CSS = ".modal.show form, form[data-region='event-form'], #id_name"
+MODAL_SAVE_XPATH = "//div[contains(@class,'modal') and contains(@class,'show')]//button[normalize-space()='Save']"
+MODAL_SHOW_CSS = ".modal.show"
+EVENT_NAME_ID = "id_name"
+EVENT_TYPE_ID = "id_eventtype"
+
 
 def _create_single_event(driver):
-    from level1.f008_create_event_level1 import (
-        navigate_to_calendar,
-        open_new_event_form,
-        submit_event_form,
+    # Navigate to calendar
+    driver.get(BASE_URL.rstrip("/") + CALENDAR_URL_PATH)
+    WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, CALENDAR_WAIT_CSS))
     )
-    from common.moodle_helpers import find_first_available, get_visible_text
-    from level1.f008_create_event_level1 import (
-        EVENT_TITLE_LOCATOR_CANDIDATES,
-        ERROR_MESSAGE_CANDIDATES,
-        SUCCESS_MESSAGE_CANDIDATES,
+
+    # Open new event modal
+    btn = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, NEW_EVENT_XPATH))
     )
-    import time
+    btn.click()
+    WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, MODAL_FORM_CSS))
+    )
 
-    navigate_to_calendar(driver)
-    open_new_event_form(driver)
-
+    # Fill title
     unique_title = make_unique_name("ReliabilityTest")
-    title_el = find_first_available(driver, EVENT_TITLE_LOCATOR_CANDIDATES, timeout=10)
-    title_el.clear()
-    title_el.send_keys(unique_title)
+    name_field = driver.find_element(By.ID, EVENT_NAME_ID)
+    name_field.clear()
+    name_field.send_keys(unique_title)
 
-    submit_event_form(driver)
+    # Select user event type
+    try:
+        WebDriverWait(driver, 8).until(
+            EC.presence_of_element_located(
+                (By.XPATH, f"//select[@id='{EVENT_TYPE_ID}']/option[@value='user']")
+            )
+        )
+        Select(driver.find_element(By.ID, EVENT_TYPE_ID)).select_by_value("user")
+    except Exception:
+        pass
+
+    # Click Save
+    save_btn = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, MODAL_SAVE_XPATH))
+    )
+    save_btn.click()
     time.sleep(1)
 
-    error_text = get_visible_text(driver, ERROR_MESSAGE_CANDIDATES, timeout=3)
-    if error_text:
-        return False, f"Validation error: {error_text}"
+    # Check for errors
+    try:
+        errors = driver.find_elements(
+            By.CSS_SELECTOR,
+            "#id_error_name, .alert-danger, .invalid-feedback, .error",
+        )
+        for err in errors:
+            if err.is_displayed() and err.text.strip():
+                return False, f"Validation error: {err.text.strip()}"
+    except Exception:
+        pass
 
-    success_text = get_visible_text(driver, SUCCESS_MESSAGE_CANDIDATES, timeout=3)
-    if success_text:
+    # Verify modal closed
+    try:
+        WebDriverWait(driver, 15).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, MODAL_SHOW_CSS))
+        )
         return True, "Event created"
-
-    return True, "Event created (assumed)"
+    except Exception:
+        return False, "Modal did not close after save"
 
 
 def _take_screenshot(driver, prefix):

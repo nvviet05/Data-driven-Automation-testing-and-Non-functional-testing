@@ -6,13 +6,13 @@ import time
 import uuid
 from datetime import datetime
 
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
 from common.browser import close_driver, create_driver
 from common.csv_reader import read_csv
-from common.moodle_helpers import (
-    find_first_available,
-    login_to_moodle,
-    make_unique_name,
-)
+from common.moodle_helpers import login_to_moodle, make_unique_name
 from common.result_writer import write_results
 from common.screenshot import save_screenshot
 from config.settings import BASE_URL
@@ -37,6 +37,14 @@ NFR_RESULT_COLUMNS = [
     "screenshot_path",
     "error_message",
 ]
+
+# Locators from Katalon recordings
+ADD_QUIZ_URL_PATH = "/course/modedit.php?add=quiz&course=3&section=1&return=0&sr=0"
+QUIZ_FORM_WAIT_CSS = "#id_name, form#mform1, form.mform"
+QUIZ_NAME_ID = "id_name"
+SUBMIT_BUTTON_NAME = "submitbutton2"
+QUIZ_INDEX_PATH = "/mod/quiz/index.php?id=3"
+QUIZ_INDEX_WAIT_CSS = "#page-mod-quiz-index, table.generaltable, #region-main"
 
 
 def _build_url(page_url):
@@ -72,29 +80,30 @@ def _measure_page_load(driver, url):
 
 
 def _measure_quiz_submission(driver):
-    from level1.f003_create_quiz_level1 import (
-        QUIZ_NAME_CANDIDATES,
-        SAVE_BUTTON_CANDIDATES,
-        navigate_to_course,
-        turn_editing_on_if_needed,
-        open_add_activity_form,
-        select_quiz_activity,
+    # Navigate to quiz add form
+    url = BASE_URL.rstrip("/") + ADD_QUIZ_URL_PATH
+    driver.get(url)
+    WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, QUIZ_FORM_WAIT_CSS))
     )
 
-    navigate_to_course(driver, {})
-    turn_editing_on_if_needed(driver)
-    open_add_activity_form(driver)
-    select_quiz_activity(driver)
-
+    # Fill quiz name
     unique_name = make_unique_name("PerfTest")
-    name_el = find_first_available(driver, QUIZ_NAME_CANDIDATES, timeout=10)
-    name_el.clear()
-    name_el.send_keys(unique_name)
+    name_field = driver.find_element(By.ID, QUIZ_NAME_ID)
+    name_field.clear()
+    name_field.send_keys(unique_name)
 
-    save_btn = find_first_available(driver, SAVE_BUTTON_CANDIDATES, timeout=10)
+    # Submit and measure
+    submit_btn = driver.find_element(By.NAME, SUBMIT_BUTTON_NAME)
     start = time.perf_counter()
-    save_btn.click()
-    time.sleep(1)
+    submit_btn.click()
+
+    # Wait for page to load after submission
+    WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located(
+            (By.CSS_SELECTOR, "#page-mod-quiz-index, #page-mod-quiz-view, #region-main, form#mform1")
+        )
+    )
     elapsed = time.perf_counter() - start
     return elapsed
 
@@ -129,6 +138,7 @@ def run() -> None:
             status = "PASS"
             screenshot_path = ""
             error_message = ""
+            measured = 0.0
 
             try:
                 target_url = _build_url(row.get("page_url", ""))
@@ -136,33 +146,36 @@ def run() -> None:
                 if "page_load" in metric:
                     elapsed = _measure_page_load(driver, target_url)
                     page_load_seconds = elapsed
+                    measured = elapsed
                     actual = f"page_load_seconds={elapsed:.2f}"
                 elif "submission" in metric:
                     try:
                         elapsed = _measure_quiz_submission(driver)
                         submission_seconds = elapsed
+                        measured = elapsed
                         actual = f"submission_seconds={elapsed:.2f}"
                     except Exception as exc:
                         elapsed = _measure_page_load(driver, target_url)
                         submission_seconds = elapsed
+                        measured = elapsed
                         actual = f"submission_seconds={elapsed:.2f} (page load fallback)"
                         error_message = f"Full submission measurement failed: {exc}"
                 elif "average" in metric:
                     if page_load_seconds == 0.0:
                         page_load_seconds = _measure_page_load(driver, target_url)
                     avg = (page_load_seconds + submission_seconds) / 2 if submission_seconds > 0 else page_load_seconds
+                    measured = avg
                     actual = (
                         f"page_load_seconds={page_load_seconds:.2f}; "
                         f"submission_seconds={submission_seconds:.2f}; "
                         f"average_seconds={avg:.2f}"
                     )
-                    elapsed = avg
                 else:
                     elapsed = _measure_page_load(driver, target_url)
+                    measured = elapsed
                     actual = f"page_load_seconds={elapsed:.2f}"
 
                 seconds_limit = _extract_seconds_limit(threshold)
-                measured = elapsed if "average" not in metric else avg if "average" in metric else elapsed
                 if seconds_limit is not None and measured > seconds_limit:
                     status = "FAIL"
                     error_message = (
