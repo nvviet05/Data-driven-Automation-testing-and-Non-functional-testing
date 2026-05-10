@@ -11,7 +11,26 @@ from config.locator_strategy import get_by
 from config.settings import BASE_URL, MOODLE_PASSWORD, MOODLE_USERNAME
 
 
+def logout_if_logged_in(driver, timeout=3):
+    """Log out of any existing Moodle session before a fresh login."""
+    login_url = BASE_URL.rstrip("/") + "/login/index.php"
+    driver.get(login_url)
+
+    try:
+        logout_btn = WebDriverWait(driver, timeout).until(
+            EC.presence_of_element_located(
+                ("xpath", "//button[@type='submit' and normalize-space()='Log out']")
+            )
+        )
+        logout_btn.click()
+        driver.get(login_url)
+    except Exception:
+        pass  # Not logged in — already on login page
+
+
 def login_to_moodle(driver, timeout=15):
+    logout_if_logged_in(driver)
+
     login_url = BASE_URL.rstrip("/") + "/login/index.php"
     driver.get(login_url)
 
@@ -28,9 +47,10 @@ def login_to_moodle(driver, timeout=15):
     login_btn = driver.find_element("id", "loginbtn")
     login_btn.click()
 
-    # TODO: If Moodle Sandbox login page differs, update the logged-in check below.
     wait.until(
-        EC.presence_of_element_located(("css selector", "body.loggedin, .usermenu"))
+        EC.presence_of_element_located(
+            ("css selector", "#page-my-index, .usermenu, body.loggedin, .navbar, #nav-drawer, header.navbar")
+        )
     )
 
 
