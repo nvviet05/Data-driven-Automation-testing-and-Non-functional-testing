@@ -1,9 +1,11 @@
-tc_id,feature_id,owner,test_description,pre_condition,event_title,event_date,event_time,event_duration,event_type,expected_result,expected_message,should_pass,notes
-F008-L1-001,F008,Nguyen Van Viet,Valid event creation with all fields,Logged in,Event Valid Test,FUTURE_DATE,10:00,60,user,Event created,,TRUE,Standard valid event
-F008-L1-002,F008,Nguyen Van Viet,Empty event title should fail validation,Logged in,,FUTURE_DATE,10:00,60,user,Validation error,required,FALSE,Title is mandatory
-F008-L1-003,F008,Nguyen Van Viet,Boundary duration of 1 minute,Logged in,Event Min Duration,FUTURE_DATE,14:00,1,user,Event created,,TRUE,Minimum valid duration
-F008-L1-004,F008,Nguyen Van Viet,Invalid duration value zero,Logged in,Event Zero Duration,FUTURE_DATE,09:00,0,user,Validation error,,FALSE,Duration zero is invalid
-F008-L1-005,F008,Nguyen Van Viet,Event with long title boundary,Logged in,This Is A Very Long Event Title For Boundary Testing Purposes Only,FUTURE_DATE,11:00,30,user,Event created,,TRUE,Long title boundary
-F008-L1-006,F008,Nguyen Van Viet,Event with site event type,Logged in,Site Level Event,FUTURE_DATE,08:00,120,site,Event created,,TRUE,Site-level event type
-F008-L1-007,F008,Nguyen Van Viet,Event with course event type,Logged in,Course Level Event,FUTURE_DATE,15:00,45,course,Event created,,TRUE,Course-level event type
-F008-L1-008,F008,Nguyen Van Viet,Event at midnight time,Logged in,Midnight Event,FUTURE_DATE,00:00,60,user,Event created,,TRUE,Midnight edge case
+tc_id,feature_id,owner,test_description,pre_condition,event_title,event_title_mode,event_date_mode,event_start_hour,event_start_minute,event_type,duration_mode,duration_minutes,duration_until_hour,duration_until_minute,expected_result,expected_message,should_pass,notes
+F008-L1-001,F008,Nguyen Van Viet,Title length minimum boundary with user event and no duration,Logged in,E,min,today,10,00,user,none,,,,Event created,,TRUE,Minimum valid event title
+F008-L1-002,F008,Nguyen Van Viet,Empty title should fail validation,Logged in,,empty,today,10,00,user,none,,,,Validation error,required,FALSE,Title is mandatory
+F008-L1-003,F008,Nguyen Van Viet,Title maximum boundary should create event,Logged in,This Is A Very Long Event Title For Boundary Testing Purposes Only,max,today,11,00,user,none,,,,Event created,,TRUE,Long title boundary
+F008-L1-004,F008,Nguyen Van Viet,Duration minutes minimum boundary,Logged in,Event Min Duration,normal,today,14,00,user,minutes,1,,,Event created,,TRUE,One minute duration is valid
+F008-L1-005,F008,Nguyen Van Viet,Duration minutes zero should fail validation,Logged in,Event Zero Duration,normal,future,09,00,user,minutes,0,,,Validation error,,FALSE,Zero duration minutes should be rejected
+F008-L1-006,F008,Nguyen Van Viet,Duration none should create event,Logged in,Event No Duration,normal,today,13,30,user,none,,,,Event created,,TRUE,No duration radio path
+F008-L1-007,F008,Nguyen Van Viet,Duration until before start should fail validation,Logged in,Event Until Before Start,normal,today,16,00,user,until,,15,30,Validation error,,FALSE,End time before start should show validation
+F008-L1-008,F008,Nguyen Van Viet,All valid user event should create event,Logged in,Event Valid User,normal,today,08,45,user,minutes,30,,,Event created,,TRUE,Standard valid user event
+F008-L1-009,F008,Nguyen Van Viet,Course event duration when course type is available,Logged in,Course Level Event,normal,today,15,00,course,minutes,45,,,Event created or BLOCKED,,TRUE,Blocked if course event type is not available for role
+F008-L1-010,F008,Nguyen Van Viet,Site event behavior for current role,Logged in,Site Level Event,normal,today,12,00,site,none,,,,Event created,,TRUE,Current Moodle role exposes and allows site event creation

@@ -4,7 +4,7 @@ Run scripts from the repository root so relative paths resolve correctly.
 
 ## Google Sheets Source of Truth
 
-The shared Google Sheets workbook has only five tabs, not one tab per feature:
+The shared Google Sheets workbook has five working tabs:
 
 - `TC_Inventory`
 - `Level1_Data`
@@ -12,13 +12,13 @@ The shared Google Sheets workbook has only five tabs, not one tab per feature:
 - `Execution_Results`
 - `Non_Functional_Testing`
 
-Use Google Sheets as the working source of truth during team collaboration. Before submission, export the relevant rows into CSV files under the `data/` folder.
+Use Google Sheets during team collaboration. Before submission, export the relevant rows into CSV files under `data/`.
 
 ## Level 1 CSV Files
 
 Location: `data/level1/*.csv`
 
-Level 1 uses one CSV row per test case. Fill input values and expected results for the feature script. The Python script keeps the workflow logic, so the CSV should focus on data such as names, dates, roles, file names, passwords, and expected messages. Export the relevant `Level1_Data` rows into the matching `data/level1/*.csv` file for each feature.
+Level 1 uses one CSV row per test case. The Python script owns the workflow logic; the CSV owns test data, expected messages, and expected pass/fail behavior.
 
 Minimum guidance:
 
@@ -31,14 +31,16 @@ Minimum guidance:
 
 Location: `data/level2/*.csv`
 
-Level 2 uses one CSV row per action step. Export the relevant `Level2_Locators_Data` rows into the matching `data/level2/*.csv` file for each feature. Fill:
+Level 2 uses one CSV row per action step. Supported `action_type` values include `open`, `type`, `click`, `select`, `upload`, `wait`, `verify_text`, and `verify_visible`.
 
-- `page_url`: page to open, either relative to `BASE_URL` or a full Moodle URL.
-- `locator_type`: Selenium locator strategy such as `id`, `name`, `css`, or `xpath`.
-- `locator_value`: real Moodle locator.
-- `action_type`: supported action such as `open`, `type`, `click`, `select`, `upload`, `wait`, `verify_text`, or `verify_visible`.
-- `input_value`: value used by the step.
-- `expected_result`: expected text, visibility, or state for verification steps.
+The shared Level 2 runner supports:
+
+- CSS fallback selectors separated with `;`.
+- Any locator fallback separated with `;;`.
+- XPath union expressions with `|`, with fallback to each side if the full union fails.
+- `ENV_MOODLE_USERNAME` and `ENV_MOODLE_PASSWORD` input tokens.
+- `UNIQUE:<prefix>` input tokens for timestamped test data.
+- Select input prefixes `value=` and `label=`.
 
 Keep Level 2 steps in execution order for each `tc_id`.
 
@@ -46,19 +48,7 @@ Keep Level 2 steps in execution order for each `tc_id`.
 
 Location: `data/non_functional/*.csv`
 
-Export the relevant rows from `Non_Functional_Testing` into the matching script-specific CSV file under `data/non_functional/`.
-
-Required columns:
-
-```text
-tc_id,member,feature_id,non_functional_type,requirement,page_url,input_1,input_2,input_3,metric,threshold,expected_result,notes
-```
-
-Use `input_1`, `input_2`, and `input_3` for locator names, safe test values, repeat counts, role names, or small file names. Placeholder values such as `TODO_LOCATOR` and `TODO_TEST_DATA` are allowed during planning, but they must be replaced before final execution.
-
-## Result CSV Generation
-
-All scripts should call `common.result_writer.write_results`. Non-functional result rows use:
+Non-functional result rows use:
 
 ```text
 run_id, run_date, member, feature_id, tc_id, non_functional_type, requirement, metric, expected_result, actual_result, status, screenshot_path, error_message
@@ -68,90 +58,72 @@ Rules:
 
 - Create one `run_id` per script execution with `uuid.uuid4()`.
 - Create `run_date` with `datetime.now().isoformat(timespec="seconds")`.
-- Append result rows to `results/non_functional/<script_specific_name>_results.csv`.
-- Use `PASS`, `FAIL`, or `ERROR` for `status`.
+- Write `PASS`, `FAIL`, `ERROR`, or `SKIPPED` where a script intentionally blocks on role capability.
 - Put exception text in `error_message` for `ERROR`.
 
 ## Screenshot Evidence
 
 Failed or error cases should call `common.screenshot.save_screenshot`.
 
-Recommended naming pattern:
+Screenshots are saved under:
 
 ```text
-<FEATURE_ID>_<short_requirement>_<tc_id>_<timestamp>.png
+screenshots/level1/
+screenshots/level2/
+screenshots/non_functional/
 ```
 
-Examples:
-
-- `F003_quiz_performance_NF-F003-001_20260507_103000.png`
-- `F006_upload_performance_NF-F006-001_20260507_103000.png`
-
-Save screenshots under `screenshots/non_functional/`.
-
-## Running Scripts
-
-Examples from repository root:
-
-```bash
-python -m level1.f003_create_quiz_level1
-python -m level2.f003_create_quiz_level2
-python -m non_functional.f003_quiz_performance_test
-```
-
-Before final demo:
-
-- Install dependencies with `pip install -r requirements.txt`.
-- Create local `.env` from `.env.example`.
-- Confirm Chrome and ChromeDriver are available for Selenium.
-- Replace placeholder Moodle locators and test data.
+Screenshots should only appear for `FAIL` or `ERROR` evidence unless a report explicitly references them.
 
 ## Nguyen Van Viet End-to-End Workflow
 
 ### Features
 
-- **F003** — Create Quiz
-- **F008** — Create Calendar Event
+- **F003** - Create Quiz
+- **F008** - Create Calendar Event
+
+### Automation Notes
+
+F003 opens Moodle's quiz creation form directly at:
+
+```text
+/course/modedit.php?add=quiz&course=3&section=1&return=0&sr=0
+```
+
+This is an automation shortcut derived from the Project 2 Katalon logs. It avoids the activity chooser while still testing the actual Moodle quiz form, submission, validation messages, and verification in `/mod/quiz/index.php?id=3`.
+
+F008 uses the Moodle calendar modal form from the Project 2 Katalon logs. The script opens `/calendar/view.php?view=month`, clicks `New event`, fills `id=id_name`, `id=id_eventtype`, start time, and duration controls, then saves through the visible modal. Successful events are verified in `/calendar/view.php?view=upcoming`; negative cases require a visible validation selector.
 
 ### Running Commands
 
 Run all scripts from the repository root:
 
 ```bash
-# Level 1 — Data-driven automation
-python -m level1.f008_create_event_level1
 python -m level1.f003_create_quiz_level1
-
-# Non-functional tests
-python -m non_functional.f008_event_reliability_test
+python -m level1.f008_create_event_level1
 python -m non_functional.f003_quiz_performance_test
-
-# Level 2 — Generic step-driven automation
-python -m level2.f008_create_event_level2
+python -m non_functional.f008_event_reliability_test
 python -m level2.f003_create_quiz_level2
+python -m level2.f008_create_event_level2
+```
+
+Final validation command:
+
+```bash
+python -m compileall common config level1 level2 non_functional
 ```
 
 ### Expected Output Files
 
 ```text
-results/level1/f008_level1_results.csv
 results/level1/f003_level1_results.csv
-results/non_functional/f008_event_reliability_results.csv
+results/level1/f008_level1_results.csv
 results/non_functional/f003_quiz_performance_results.csv
-results/level2/f008_level2_results.csv
+results/non_functional/f008_event_reliability_results.csv
 results/level2/f003_level2_results.csv
+results/level2/f008_level2_results.csv
 ```
 
-### Screenshot Evidence
+### Repository Hygiene
 
-Screenshots on FAIL or ERROR are saved under:
-
-```text
-screenshots/level1/
-screenshots/non_functional/
-screenshots/level2/
-```
-
-### Before Final Run
-
-Replace `TODO_LOCATOR` and `TODO_TEST_DATA` with verified Moodle Sandbox locators and safe test data before final execution. Check all CSV files under `data/` for placeholder values.
+Confirm `.env` exists locally with Moodle credentials, but do not commit it. Result CSVs and screenshots are generated evidence only; keep `.gitkeep` placeholders in source control and attach final generated evidence only when the report references it.

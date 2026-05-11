@@ -1,10 +1,13 @@
 .env
+.venv/
+venv/
+env/
 __pycache__/
 *.pyc
 .pytest_cache/
-venv/
-env/
+.claude/
+logs/*.log
 results/**/*.csv
 screenshots/**/*.png
 screenshots/**/*.jpg
-logs/*.log
+*.zip

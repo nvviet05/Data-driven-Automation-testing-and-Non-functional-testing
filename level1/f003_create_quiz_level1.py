@@ -35,7 +35,8 @@ SCREENSHOT_DIR = os.path.join(ROOT_DIR, "screenshots", "level1")
 FEATURE_ID = "F003"
 LEVEL = "level1"
 
-# Direct URL to add a quiz to course id=3, section=1
+# Automation shortcut from Project 2 Katalon logs: add a quiz to course id=3,
+# section=1 without clicking through the course activity chooser.
 ADD_QUIZ_URL_PATH = "/course/modedit.php?add=quiz&course=3&section=1&return=0&sr=0"
 
 # Locators verified from Project 2 Katalon recordings
@@ -44,11 +45,20 @@ QUIZ_NAME_ID = "id_name"
 SUBMIT_BUTTON_NAME = "submitbutton2"
 QUIZ_INDEX_PATH = "/mod/quiz/index.php?id=3"
 QUIZ_INDEX_WAIT = "css=#page-mod-quiz-index, table.generaltable, #region-main"
-ERROR_SELECTORS = "#id_error_name, .alert-danger, .text-danger, .form-control-feedback, .invalid-feedback, .error"
+ERROR_SELECTORS = "#id_error_name, #id_error_timelimit, .invalid-feedback, .error"
 TIMELIMIT_ENABLED_ID = "id_timelimit_enabled"
 TIMELIMIT_NUMBER_ID = "id_timelimit_number"
 TIMELIMIT_UNIT_ID = "id_timelimit_timeunit"
 ATTEMPTS_ID = "id_attempts"
+
+
+def _xpath_literal(value: str) -> str:
+    if "'" not in value:
+        return f"'{value}'"
+    if '"' not in value:
+        return f'"{value}"'
+    parts = value.split("'")
+    return "concat(" + ', "\'", '.join(f"'{part}'" for part in parts) + ")"
 
 
 def navigate_to_quiz_form(driver):
@@ -158,11 +168,10 @@ def get_quiz_actual_result(driver, row):
                     (By.CSS_SELECTOR, "#page-mod-quiz-index, table.generaltable, #region-main")
                 )
             )
-            # Check short prefix of the unique name
-            search_text = quiz_name.split("_")[0] if "_" in quiz_name else quiz_name[:20]
+            search_text = quiz_name.split("_", 1)[0]
             WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located(
-                    (By.XPATH, f"//*[contains(normalize-space(.), '{search_text}')]")
+                    (By.XPATH, f"//*[contains(normalize-space(.), {_xpath_literal(search_text)})]")
                 )
             )
             return "Quiz created"
@@ -171,10 +180,11 @@ def get_quiz_actual_result(driver, row):
     elif not should_pass:
         # For negative tests, stay on form — check if still on form page
         try:
-            driver.find_element(By.ID, QUIZ_NAME_ID)
-            return "Validation error"
+            if driver.find_elements(By.ID, QUIZ_NAME_ID):
+                return "No validation error shown"
         except Exception:
-            return "Unknown result"
+            pass
+        return "Unknown result"
 
     return "Unknown result"
 
@@ -201,60 +211,62 @@ def verify_quiz_result(row, actual_result):
 
 def run():
     rows = read_csv(DATA_PATH)
-    driver = create_driver()
     results = []
     run_id = str(uuid.uuid4())
     run_date = datetime.now().isoformat(timespec="seconds")
 
-    try:
-        for row in rows:
-            tc_id = row.get("tc_id", "").strip()
-            expected = row.get("expected_result", "").strip()
-            actual = ""
-            status = "PASS"
-            screenshot_path = ""
-            error_message = ""
+    for row in rows:
+        tc_id = row.get("tc_id", "").strip()
+        expected = row.get("expected_result", "").strip()
+        actual = ""
+        status = "PASS"
+        screenshot_path = ""
+        error_message = ""
+        driver = None
 
+        try:
+            driver = create_driver()
+            login_to_moodle(driver)
+            navigate_to_quiz_form(driver)
+            fill_quiz_form(driver, row)
+            submit_quiz_form(driver)
+            actual = get_quiz_actual_result(driver, row)
+            status = verify_quiz_result(row, actual)
+
+            if status == "FAIL":
+                screenshot_path = save_screenshot(
+                    driver, SCREENSHOT_DIR, f"{FEATURE_ID}_{tc_id}"
+                )
+        except Exception as exc:
+            status = "ERROR"
+            error_message = str(exc)
+            actual = "ERROR"
             try:
-                login_to_moodle(driver)
-                navigate_to_quiz_form(driver)
-                fill_quiz_form(driver, row)
-                submit_quiz_form(driver)
-                actual = get_quiz_actual_result(driver, row)
-                status = verify_quiz_result(row, actual)
+                screenshot_path = save_screenshot(
+                    driver, SCREENSHOT_DIR, f"{FEATURE_ID}_{tc_id}"
+                )
+            except Exception:
+                pass
+        finally:
+            close_driver(driver)
 
-                if status == "FAIL":
-                    screenshot_path = save_screenshot(
-                        driver, SCREENSHOT_DIR, f"{FEATURE_ID}_{tc_id}"
-                    )
-            except Exception as exc:
-                status = "ERROR"
-                error_message = str(exc)
-                actual = "ERROR"
-                try:
-                    screenshot_path = save_screenshot(
-                        driver, SCREENSHOT_DIR, f"{FEATURE_ID}_{tc_id}"
-                    )
-                except Exception:
-                    pass
+        results.append(
+            {
+                "run_id": run_id,
+                "run_date": run_date,
+                "feature_id": FEATURE_ID,
+                "tc_id": tc_id,
+                "level": LEVEL,
+                "expected_result": expected,
+                "actual_result": actual,
+                "status": status,
+                "screenshot_path": screenshot_path,
+                "error_message": error_message,
+            }
+        )
 
-            results.append(
-                {
-                    "run_id": run_id,
-                    "run_date": run_date,
-                    "feature_id": FEATURE_ID,
-                    "tc_id": tc_id,
-                    "level": LEVEL,
-                    "expected_result": expected,
-                    "actual_result": actual,
-                    "status": status,
-                    "screenshot_path": screenshot_path,
-                    "error_message": error_message,
-                }
-            )
-    finally:
-        close_driver(driver)
-
+    if os.path.exists(RESULT_PATH):
+        os.remove(RESULT_PATH)
     write_results(RESULT_PATH, results)
     print(f"F003 Level 1 complete. Results: {RESULT_PATH}")
 

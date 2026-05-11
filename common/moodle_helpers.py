@@ -3,7 +3,7 @@
 import uuid
 from datetime import datetime
 
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -36,16 +36,23 @@ def login_to_moodle(driver, timeout=15):
 
     wait = WebDriverWait(driver, timeout)
 
-    username_field = wait.until(EC.presence_of_element_located(("id", "username")))
-    username_field.clear()
-    username_field.send_keys(MOODLE_USERNAME)
+    for attempt in range(3):
+        try:
+            username_field = wait.until(EC.element_to_be_clickable(("id", "username")))
+            username_field.clear()
+            username_field.send_keys(MOODLE_USERNAME)
 
-    password_field = driver.find_element("id", "password")
-    password_field.clear()
-    password_field.send_keys(MOODLE_PASSWORD)
+            password_field = wait.until(EC.element_to_be_clickable(("id", "password")))
+            password_field.clear()
+            password_field.send_keys(MOODLE_PASSWORD)
 
-    login_btn = driver.find_element("id", "loginbtn")
-    login_btn.click()
+            login_btn = wait.until(EC.element_to_be_clickable(("id", "loginbtn")))
+            login_btn.click()
+            break
+        except StaleElementReferenceException:
+            if attempt == 2:
+                raise
+            driver.get(login_url)
 
     wait.until(
         EC.presence_of_element_located(
