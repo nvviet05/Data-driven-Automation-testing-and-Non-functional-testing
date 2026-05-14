@@ -3,7 +3,7 @@
 import os
 import time
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -52,6 +52,8 @@ MODAL_SAVE_XPATH = (
 )
 MODAL_SHOW_CSS = ".modal.show"
 ERROR_SELECTORS = "#id_error_name, .alert-danger, .text-danger, .invalid-feedback, .error"
+UPCOMING_VERIFY_RETRIES = 5
+UPCOMING_VERIFY_DELAY_SECONDS = 2
 
 
 def _parse_input(row: dict, key: str, default: str = "") -> str:
@@ -98,24 +100,72 @@ def _visible_errors(driver) -> str:
     return "; ".join(messages)
 
 
+def _select_time_option(driver, element_id: str, value: str):
+    try:
+        selector = Select(driver.find_element(By.ID, element_id))
+        try:
+            selector.select_by_visible_text(value.zfill(2))
+        except Exception:
+            selector.select_by_value(str(int(value)))
+    except Exception:
+        pass
+
+
+def _set_future_start_time(driver):
+    target = datetime.now() + timedelta(hours=1)
+    _select_time_option(driver, "id_timestart_hour", str(target.hour))
+    _select_time_option(driver, "id_timestart_minute", str((target.minute // 5) * 5))
+
+
+def _stable_title_prefix(event_title: str) -> str:
+    parts = event_title.rsplit("_", 2)
+    if len(parts) == 3 and parts[1].isdigit():
+        return parts[0]
+    return event_title
+
+
+def _visible_text_contains(driver, text: str, timeout: int = 8) -> bool:
+    xpath = f"//*[contains(normalize-space(.), {_xpath_literal(text)})]"
+    WebDriverWait(driver, timeout).until(
+        EC.presence_of_element_located((By.XPATH, xpath))
+    )
+    return True
+
+
 def _verify_in_upcoming(driver, event_title: str) -> bool:
-    last_error = None
-    for _ in range(3):
+    stable_prefix = _stable_title_prefix(event_title)
+    last_error = ""
+
+    for attempt in range(1, UPCOMING_VERIFY_RETRIES + 1):
         try:
             driver.get(BASE_URL.rstrip("/") + CALENDAR_UPCOMING_PATH)
             WebDriverWait(driver, 15).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, UPCOMING_WAIT_CSS))
             )
-            WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located(
-                    (By.XPATH, f"//*[contains(normalize-space(.), {_xpath_literal(event_title)})]")
-                )
-            )
-            return True
+
+            try:
+                return _visible_text_contains(driver, event_title)
+            except Exception as exact_exc:
+                if stable_prefix != event_title:
+                    try:
+                        return _visible_text_contains(driver, stable_prefix)
+                    except Exception as prefix_exc:
+                        last_error = (
+                            f"attempt {attempt}: exact title not found ({exact_exc}); "
+                            f"stable prefix '{stable_prefix}' not found ({prefix_exc})"
+                        )
+                else:
+                    last_error = f"attempt {attempt}: exact title not found ({exact_exc})"
         except Exception as exc:
-            last_error = exc
-            time.sleep(2)
-    raise last_error
+            last_error = f"attempt {attempt}: upcoming page did not stabilize ({exc})"
+
+        if attempt < UPCOMING_VERIFY_RETRIES:
+            time.sleep(UPCOMING_VERIFY_DELAY_SECONDS)
+
+    raise RuntimeError(
+        f"Event '{event_title}' not found in upcoming after "
+        f"{UPCOMING_VERIFY_RETRIES} attempts. {last_error}"
+    )
 
 
 def _create_single_event(driver, title_prefix: str):
@@ -145,6 +195,8 @@ def _create_single_event(driver, title_prefix: str):
     except Exception:
         pass
 
+    _set_future_start_time(driver)
+
     save_btn = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.XPATH, MODAL_SAVE_XPATH))
     )
@@ -160,12 +212,14 @@ def _create_single_event(driver, title_prefix: str):
             EC.invisibility_of_element_located((By.CSS_SELECTOR, MODAL_SHOW_CSS))
         )
     except Exception:
-        return False, unique_title, "Modal did not close after save"
+        return False, unique_title, "Event creation failed: modal did not close after save"
+
+    time.sleep(UPCOMING_VERIFY_DELAY_SECONDS)
 
     try:
         _verify_in_upcoming(driver, unique_title)
     except Exception as exc:
-        return False, unique_title, f"Event not found in upcoming: {exc}"
+        return False, unique_title, f"Upcoming verification failed after event creation: {exc}"
 
     return True, unique_title, "Event created"
 

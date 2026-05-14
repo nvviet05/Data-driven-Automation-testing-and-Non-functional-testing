@@ -1,4 +1,5 @@
 import os
+import time
 import uuid
 from datetime import datetime
 
@@ -26,6 +27,34 @@ LEVEL2_RESULT_COLUMNS = [
     "screenshot_path",
     "error_message",
 ]
+MAX_TC_ATTEMPTS = 2
+
+
+def _is_driver_timeout(results: list[dict]) -> bool:
+    for result in results:
+        message = result.get("error_message", "")
+        if "HTTPConnectionPool" in message and "Read timed out" in message:
+            return True
+    return False
+
+
+def _run_single_tc(tc_rows: list[dict]) -> list[dict]:
+    last_results = []
+
+    for attempt in range(1, MAX_TC_ATTEMPTS + 1):
+        driver = create_driver()
+        try:
+            last_results = run_data_driven_steps(driver, tc_rows)
+        finally:
+            close_driver(driver)
+
+        if not _is_driver_timeout(last_results):
+            return last_results
+
+        if attempt < MAX_TC_ATTEMPTS:
+            time.sleep(2)
+
+    return last_results
 
 
 def run():
@@ -35,12 +64,8 @@ def run():
     step_results = []
 
     for tc_id in dict.fromkeys(row.get("tc_id", "").strip() for row in rows):
-        driver = create_driver()
-        try:
-            tc_rows = [row for row in rows if row.get("tc_id", "").strip() == tc_id]
-            step_results.extend(run_data_driven_steps(driver, tc_rows))
-        finally:
-            close_driver(driver)
+        tc_rows = [row for row in rows if row.get("tc_id", "").strip() == tc_id]
+        step_results.extend(_run_single_tc(tc_rows))
 
     for result in step_results:
         result["run_id"] = run_id

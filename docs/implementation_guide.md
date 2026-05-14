@@ -127,3 +127,26 @@ results/level2/f008_level2_results.csv
 ### Repository Hygiene
 
 Confirm `.env` exists locally with Moodle credentials, but do not commit it. Result CSVs and screenshots are generated evidence only; keep `.gitkeep` placeholders in source control and attach final generated evidence only when the report references it.
+
+### Final Submission ZIP
+
+Do not include these files or folders in the final submission ZIP:
+
+- `.env`
+- `.git/`
+- `.venv/`
+- `__pycache__/`
+- `*.pyc`
+- `.pytest_cache/`
+- `.claude/`
+
+Include these items in the final submission ZIP:
+
+- Source code
+- CSV input data
+- Generated result CSV files used as evidence
+- Screenshots for `FAIL`/`ERROR` or selected report evidence
+- `README.md`
+- `requirements.txt`
+- `.env.example`
+- Report PDF
