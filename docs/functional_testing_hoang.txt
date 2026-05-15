@@ -24,6 +24,19 @@ f001_level1_data.csv (main test cases) and f001_level1_uct_data.csv (UCT
 scenarios). Level 2 additionally reads locators from f001_level2_data.csv
 instead of hardcoding them in the script.
 
+Prerequisites / Ideal conditions to run:
+  - The Moodle sandbox should be in a freshly reset state, or all test users
+    created in previous runs must be manually deleted before re-running,
+    as duplicate usernames or emails will cause related test cases to fail.
+  - The admin account password must be "sandbox24" (default sandbox value).
+  - Password policy must be enabled on the site (the script handles this
+    automatically in setUpClass).
+  - Level 1 and Level 2 scripts are independent of each other but share the
+    same test data and target the same sandbox environment. Running Level 1
+    followed by Level 2 without resetting the sandbox state (e.g. deleting
+    created users) may cause test cases to fail due to duplicate usernames
+    or emails left over from the Level 1 run.
+
 Steps:
   1. Enable password policy on Moodle (Site Administration > Security > Site policies)
   2. Log in with the admin account
@@ -90,6 +103,18 @@ bring the account password to a known state.
 Testing tool: Selenium WebDriver + Python unittest. Test data is stored in
 f007_level1_data.csv. Level 2 additionally reads locators from
 f007_level2_data.csv instead of hardcoding them in the script.
+
+Prerequisites / Ideal conditions to run:
+  - The manager account password must be "sandbox24" before running F007,
+    as the first setup row assumes this as the starting password.
+  - Password policy must be enabled on the site (the script handles this
+    automatically in setUpClass).
+  - Level 1 and Level 2 scripts are independent of each other but share the
+    same test data and target the same sandbox environment. Running Level 1
+    followed by Level 2 without resetting the manager account password back
+    to its initial state may cause setup rows and subsequent test cases to
+    fail, as the account password will already be in a different state from
+    the Level 1 run.
 
 Steps:
   1. Enable password policy on Moodle (Site Administration > Security > Site policies)
