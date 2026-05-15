@@ -1,3 +1,36 @@
-tc_id,description,input_value,expected_result
-TC001,Change password with valid data,new_password=NewPass123,Password updated
-TC002,Change password mismatch,new_password=Mismatch123,Password not updated
+tc_id,login_username,login_password,current_password,new_password,new_password_again,expected_result
+setup_initial,manager,sandbox24,sandbox24,Moodle@24,Moodle@24,Password has been changed
+TC-007-001,manager,Moodle@24,,,,Required
+TC-007-002,manager,Moodle@24,,Abc*1234,Abc*1234,Required
+TC-007-003,manager,Moodle@24,Moodle@24,,Abc*1234,Required
+TC-007-004,manager,Moodle@24,Moodle@24,Abc*1234,,Required
+TC-007-005,manager,Moodle@24,WrongPass1*,Abc*1234,Abc*1234,"Invalid login, please try again"
+TC-007-006,manager,Moodle@24,Moodle@24,Abc*1234,Xyz*5678,These passwords do not match
+TC-007-007,manager,Moodle@24,Moodle@24,Abc*123,Abc*123,Passwords must be at least 8 characters long
+TC-007-008,manager,Moodle@24,Moodle@24,Abcd*efg,Abcd*efg,Passwords must have at least 1 digit(s)
+TC-007-009,manager,Moodle@24,Moodle@24,ABC*1234,ABC*1234,Passwords must have at least 1 lower case letter(s)
+TC-007-010,manager,Moodle@24,Moodle@24,abc*1234,abc*1234,Passwords must have at least 1 upper case letter(s)
+TC-007-011,manager,Moodle@24,Moodle@24,Abcd1234,Abcd1234,"The password must have at least 1 special character(s) such as *, -, or #"
+TC-007-012,manager,Moodle@24,Moodle@24,Moodle@24,Moodle@24,The new password must be different than the current one
+TC-007-013,manager,Moodle@24,Moodle@24,NewAbc*56,NewAbc*56,Password has been changed
+TC-007-014,manager,NewAbc*56,Aa1*aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,Abc*1234,Abc*1234,Maximum of 128 characters
+TC-007-015,manager,NewAbc*56,NewAbc*56,Aa1*aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,Aa1*aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,Password has been changed
+TC-007-016,manager,Aa1*aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,Aa1*aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,Abc*1234,Abc*1234,Password has been changed
+setup_tc_017,manager,Abc*1234,Abc*1234,Aa1*aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,Aa1*aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,Password has been changed
+TC-007-017,manager,Aa1*aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,Aa1*aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,Abc*1234,Abc*1234,Password has been changed
+TC-007-018,manager,Abc*1234,Aa1*aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,Abc*1234,Abc*1234,Maximum of 128 characters
+TC-007-019,manager,Abc*1234,Abc*1234,Abc*123,Abc*123,Passwords must be at least 8 characters long
+TC-007-020,manager,Abc*1234,Abc*1234,Abc*1235,Abc*1235,Password has been changed
+TC-007-021,manager,Abc*1235,Abc*1235,NewPass@56,NewPass@56,Password has been changed
+TC-007-022,manager,NewPass@56,,,,Required
+TC-007-023,manager,NewPass@56,,NewPass@56,NewPass@56,Required
+TC-007-024,manager,NewPass@56,NewPass@56,,Abc*1235,Required
+TC-007-025,manager,NewPass@56,NewPass@56,Abc*1235,,Required
+TC-007-026,manager,NewPass@56,WrongPass1*,NewPass@56,NewPass@56,"Invalid login, please try again"
+TC-007-027,manager,NewPass@56,NewPass@56,Abc*1235,DiffPass@99,These passwords do not match
+TC-007-028,manager,NewPass@56,NewPass@56,Ab*1234,Ab*1234,Passwords must be at least 8 characters long
+TC-007-029,manager,NewPass@56,NewPass@56,Abcdefg*,Abcdefg*,Passwords must have at least 1 digit(s)
+TC-007-030,manager,NewPass@56,NewPass@56,abcdef*1,abcdef*1,Passwords must have at least 1 upper case letter(s)
+TC-007-031,manager,NewPass@56,NewPass@56,ABCDEF*1,ABCDEF*1,Passwords must have at least 1 lower case letter(s)
+TC-007-032,manager,NewPass@56,NewPass@56,Abcdef12,Abcdef12,"The password must have at least 1 special character(s) such as *, -, or #."
+TC-007-033,manager,NewPass@56,NewPass@56,NewPass@56,NewPass@56,The new password must be different than the current one
