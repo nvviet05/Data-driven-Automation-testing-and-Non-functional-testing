@@ -1,3 +1,9 @@
-tc_id,step_id,page_url,locator_type,locator_value,action_type,input_value,expected_result
-TC001,1,/login/change_password.php,,,open,,
-TC001,2,,css,.page-header,verify_text,,Change password
+field_name,locator_type,locator_value
+site_url,url,https://sandbox51.moodledemo.net/
+user_menu,xpath,//a[@id='user-menu-toggle']/span/span/span/span
+nav_preferences,link_text,Preferences
+nav_change_password,link_text,Change password
+current_password,id,id_password
+new_password1,id,id_newpassword1
+new_password2,id,id_newpassword2
+submit,id,id_submitbutton

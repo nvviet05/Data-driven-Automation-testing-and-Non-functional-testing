@@ -1,0 +1,128 @@
+III. Non-Functional Testing
+================================================================================
+1. Security Testing — Password Policy Enforcement
+================================================================================
+NOTE: 
+- run command "pip install webdriver-manager" before run the code
+- "python non_functional/f001_f007_security_test.py" to run the code
+
+Testing type: Security Testing (Input Validation)
+
+Testing approach and idea:
+The goal of this test is to verify that the Moodle system correctly enforces its
+password policy when an admin creates a new user. According to the system
+configuration, a valid password must satisfy all of the following conditions:
+at least 8 characters long, at least 1 digit, at least 1 lowercase letter,
+at least 1 uppercase letter, and at least 1 special (non-alphanumeric) character.
+The approach is to design test cases where each case violates exactly one rule of
+the policy, then submit the form and check whether the system displays the
+appropriate error message. If the system rejects the input and shows the correct
+error message, the policy is considered properly enforced.
+
+Testing tool: Selenium WebDriver + Python unittest. Test data is stored in
+security_data.csv. The script automatically reads each row, fills in the
+Add New User form, and verifies the result on the page.
+
+Steps:
+  1. Enable password policy on Moodle (Site Administration > Security > Site policies)
+  2. Log in with the admin account
+  3. For each test case, fill in the Add New User form with a password that
+     violates exactly one rule
+  4. Submit the form
+  5. Check whether the page body text contains the corresponding error message
+  6. Record PASS/FAIL result
+
+Test cases and results:
++--------+----------------+------------------------+------------------------------------------------------+--------+
+| TC ID  | Password       | Violated rule          | Expected result                                      | Actual |
++--------+----------------+------------------------+------------------------------------------------------+--------+
+| SEC001 | less!1A        | Length < 8 characters  | Passwords must be at least 8 characters long.        | PASS   |
+| SEC002 | nouppercase1!  | No uppercase letter    | Passwords must have at least 1 upper case letter(s). | PASS   |
+| SEC003 | NOLOWERCASE1!  | No lowercase letter    | Passwords must have at least 1 lower case letter(s). | PASS   |
+| SEC004 | NoDigits!!     | No digit               | Passwords must have at least 1 digit(s).             | PASS   |
+| SEC005 | NoSpecial11    | No special character   | The password must have at least 1 special            | PASS   |
+|        |                |                        | character(s) such as *, -, or #.                     |        |
++--------+----------------+------------------------+------------------------------------------------------+--------+
+
+Conclusion: All 5 test cases passed. The system correctly enforces the password
+policy by rejecting invalid passwords and displaying a clear error message for
+each violation.
+
+
+================================================================================
+2. Performance Testing — Change Password Page Load Time
+================================================================================
+NOTE:
+- run command "pip install webdriver-manager" before run the code
+- "python level2/f007_change_password_level2.py" to run the code
+
+Testing type: Performance Testing (Response Time)
+
+Testing approach and idea:
+The goal of this test is to evaluate the load time performance of the Change
+Password page in Moodle. Since the Change Password page is a key step in the
+user flow, its load time must remain within an acceptable threshold to ensure
+a good user experience. The approach is to measure the time from the moment
+the user clicks the "Change password" link until the form is fully loaded
+(i.e., the id_password element appears on the page). The measurement is
+repeated 10 times to minimize the impact of random factors such as network
+fluctuation. The min, max, and average times are then calculated and compared
+against a threshold of 5 seconds.
+
+Testing tool: Selenium WebDriver + Python time module + Python unittest.
+
+Steps:
+  1. Log in with the admin account
+  2. Navigate to Home > User menu > Preferences
+  3. Record the start time using time.time()
+  4. Click "Change password"
+  5. Wait until the id_password element appears (form fully loaded)
+  6. Record the end time and calculate elapsed time
+  7. Repeat 10 times, then calculate min/max/average
+  8. Compare average against the threshold of 5 seconds
+
+Test results:
++--------+---------------+
+| Run    | Load time (s) |
++--------+---------------+
+| Run 1  | 0.433         |
+| Run 2  | 0.444         |
+| Run 3  | 0.424         |
+| Run 4  | 0.424         |
+| Run 5  | 0.398         |
+| Run 6  | 0.410         |
+| Run 7  | 0.432         |
+| Run 8  | 0.432         |
+| Run 9  | 0.450         |
+| Run 10 | 0.431         |
++--------+---------------+
+| Min    | 0.398s        |
+| Max    | 0.450s        |
+| Average| 0.428s        |
+| Threshold | 5.000s     |
++--------+---------------+
+
+Conclusion: PASS — The average load time of 0.428s is well within the 5-second
+threshold. The Change Password page loads quickly and consistently across all
+10 runs.
+
+Limitation: Results depend on network speed at the time of testing and may not
+accurately reflect real-world performance under concurrent user load. In practice,
+dedicated tools such as JMeter or Locust should be used for load testing with
+multiple simultaneous users to obtain more accurate and comprehensive results.
+
+
+Related Files:
+
+1. Security Testing:
+   - Script: non_functional/f001_f007_security_test.py
+     Verifies that the system correctly enforces password policy
+     when creating or changing a user account.
+   - Data file: data/non_functional/f001_f007_security_data.csv
+     Contains test cases with valid and invalid password inputs.
+
+2. Performance Testing:
+   - Script: non_functional/f001_changepass_performance_test.py
+     Measures response time when performing the change password action,
+     runs 10 times and compares against a 5-second threshold.
+     No data CSV file required.

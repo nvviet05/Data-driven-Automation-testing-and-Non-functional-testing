@@ -1,0 +1,6 @@
+tc_id,username,password,firstname,lastname,email,empty_field,fix_value,error_expected,success_expected
+TC-001-050,,Pass123!,Alice,Smith,uct002@example.com,username,uctuser02,Required,uct002@example.com
+TC-001-051,uctuser03,,Alice,Smith,uct003@example.com,password,Pass123!,Required,uct003@example.com
+TC-001-052,uctuser04,Pass123!,,Smith,uct004@example.com,firstname,Alice,Missing given name,uct004@example.com
+TC-001-053,uctuser05,Pass123!,Alice,,uct005@example.com,lastname,Smith,Missing last name,uct005@example.com
+TC-001-054,uctuser06,Pass123!,Alice,Smith,invalid-email,email,uct006@example.com,Invalid email address,uct006@example.com

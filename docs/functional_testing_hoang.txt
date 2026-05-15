@@ -1,0 +1,127 @@
+I. Functional Testing
+================================================================================
+1. F001 — Add New User
+================================================================================
+NOTE:
+- run command "pip install webdriver-manager" before run the code
+- "python level1/f001_add_user_level1.py" to run the code (Level 1)
+- "python level2/f001_add_user_level2.py" to run the code (Level 2)
+
+Testing type: Functional Testing (Form Validation)
+
+Testing approach and idea:
+The goal of this test is to verify that the Moodle system correctly handles the
+Add New User form under various input conditions. The test covers required field
+validation, username format rules, password policy enforcement, email format
+validation, boundary value analysis on field lengths, and duplicate detection
+for both username and email. An additional UCT (Use Case Testing) scenario
+verifies that after submitting a form with one missing field and receiving an
+error, the user can fix that field and successfully create the account on the
+second submission.
+
+Testing tool: Selenium WebDriver + Python unittest. Test data is stored in
+f001_level1_data.csv (main test cases) and f001_level1_uct_data.csv (UCT
+scenarios). Level 2 additionally reads locators from f001_level2_data.csv
+instead of hardcoding them in the script.
+
+Steps:
+  1. Enable password policy on Moodle (Site Administration > Security > Site policies)
+  2. Log in with the admin account
+  3. Navigate to Site Administration > Users > Add a new user
+  4. For each test case, fill in the username, password, firstname, lastname,
+     and email fields with the values specified in the data file
+  5. Click the submit button
+  6. Check whether the page body text contains the expected result string
+  7. Record PASS/FAIL result
+  8. For UCT scenarios: after the first submission fails, fix the specified
+     empty field with the fix value, submit again, and verify success
+
+Level 1 vs Level 2:
+  Level 1: All element locators (IDs, CSS selectors, link texts) are hardcoded
+  directly in the script.
+  Level 2: Locators are externalized into f001_level2_data.csv. The script reads
+  this config file at runtime and looks up each element dynamically, making the
+  test more maintainable and easier to adapt when the UI changes.
+
+Related Files:
+
+1. Level 1:
+   - Script: level1/f001_add_user_level1.py
+     Runs all test cases for Add New User with hardcoded locators.
+   - Data file: data/level1/f001_level1_data.csv
+     Contains main test cases covering validation, boundary values, and
+     duplicate detection.
+   - Data file: data/level1/f001_level1_uct_data.csv
+     Contains UCT scenarios: submit with one missing field, fix it, resubmit.
+
+2. Level 2:
+   - Script: level2/f001_add_user_level2.py
+     Runs the same test cases as Level 1 but reads locators from config file.
+   - Data file: data/level1/f001_level1_data.csv
+     Reused from Level 1 as the main test input data.
+   - Data file: data/level1/f001_level1_uct_data.csv
+     Reused from Level 1 as the UCT input data.
+   - Data file: data/level2/f001_level2_data.csv
+     Contains element locators (field_name, locator_type, locator_value) used
+     by the Level 2 script at runtime.
+
+
+================================================================================
+2. F007 — Change Password
+================================================================================
+NOTE:
+- run command "pip install webdriver-manager" before run the code
+- "python level1/f007_change_password_level1.py" to run the code (Level 1)
+- "python level2/f007_change_password_level2.py" to run the code (Level 2)
+
+Testing type: Functional Testing (Form Validation)
+
+Testing approach and idea:
+The goal of this test is to verify that the Moodle system correctly handles the
+Change Password form under various input conditions. The test covers required
+field validation, current password correctness, new password and confirmation
+match, full password policy enforcement (length, digit, uppercase, lowercase,
+special character), restriction against reusing the current password, and
+boundary value analysis on password length (up to 128 characters). Because
+the change password tests depend on the current password of the test account,
+the data file includes setup rows that run before the actual test cases to
+bring the account password to a known state.
+
+Testing tool: Selenium WebDriver + Python unittest. Test data is stored in
+f007_level1_data.csv. Level 2 additionally reads locators from
+f007_level2_data.csv instead of hardcoding them in the script.
+
+Steps:
+  1. Enable password policy on Moodle (Site Administration > Security > Site policies)
+  2. Log in with the specified account (login_username / login_password from
+     the data file)
+  3. Navigate to Home > User menu > Preferences > Change password
+  4. Fill in the current password, new password, and new password (again) fields
+     with the values specified in the data file
+  5. Click the submit button
+  6. Check whether the page body text contains the expected result string
+  7. Record PASS/FAIL result
+
+Level 1 vs Level 2:
+  Level 1: All element locators are hardcoded directly in the script.
+  Level 2: Locators are externalized into f007_level2_data.csv. The script reads
+  this config file at runtime and resolves each element dynamically, improving
+  maintainability and separation of test logic from UI structure.
+
+Related Files:
+
+1. Level 1:
+   - Script: level1/f007_change_password_level1.py
+     Runs all test cases for Change Password with hardcoded locators.
+   - Data file: data/level1/f007_level1_data.csv
+     Contains test cases including setup rows to manage account password state,
+     covering validation, policy enforcement, and boundary value analysis.
+
+2. Level 2:
+   - Script: level2/f007_change_password_level2.py
+     Runs the same test cases as Level 1 but reads locators from config file.
+   - Data file: data/level1/f007_level1_data.csv
+     Reused from Level 1 as the main test input data.
+   - Data file: data/level2/f007_level2_data.csv
+     Contains element locators (field_name, locator_type, locator_value) used
+     by the Level 2 script at runtime.
