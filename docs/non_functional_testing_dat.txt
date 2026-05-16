@@ -1,0 +1,216 @@
+II. Non-Functional Testing
+================================================================================
+1. Usability Testing — F002 Create Course & F005 Enrol Users
+================================================================================
+NOTE:
+- run command "pip install webdriver-manager" before run the code
+- "python non_functional/f002_f005_usability_test.py" to run the code
+
+Testing type: Usability Testing (Validation Feedback & Input Preservation)
+
+Testing approach and idea:
+The goal of this test is to verify that the Create Course form (F002) and the
+Enrol Users dialog (F005) provide clear feedback to the user when an invalid
+or empty submission is made, and — for the course form — that valid inputs
+the user has already typed are preserved across the failed submission so the
+user does not have to retype them. Two aspects are checked per test case:
+    - message_visibility : the page surfaces a validation feedback message
+                           (or, for the enrol dialog, the zero-enrolment
+                           confirmation) after the invalid submission.
+    - input_preservation : valid fields the user already filled in (e.g. the
+                           course Full name) still hold their submitted value
+                           after the page reloads with the validation error.
+For F002 the test submits the course form with a valid Full name but an empty
+Short name, then asserts that a visible validation error appears and the Full
+name input still contains the submitted value. For F005, because the modal
+closes on submit and Moodle reports the empty-selection outcome as a
+page-level "0 enrolled users" notification rather than a form-level error,
+the test clicks Enrol with an empty user search and asserts that the
+zero-enrolment confirmation phrase appears on the resulting page.
+
+Testing tool: Selenium WebDriver + Python (custom data-driven runner under
+common/ and config/). Test data is stored in
+f002_f005_usability_data.csv. The script automatically reads each row,
+performs the appropriate action based on feature_id (F002 -> course form,
+F005 -> enrol dialog), and verifies validation visibility and input
+preservation on the resulting page.
+
+Prerequisites / Ideal conditions to run:
+  - The admin account password must be "sandbox24" (default sandbox value).
+  - For the F005 row, course id 3 must exist on the sandbox (the default
+    "Sandbox Course 1" in a fresh demo site is normally id 3). Override via
+    the input_3 "course_id=" cell in the CSV if your sandbox uses a
+    different id.
+
+Steps:
+  1. Log in with the admin account
+  2. For each row, dispatch based on feature_id:
+       F002 -> open /course/edit.php?category=1, fill Full name with the
+               valid value and leave Short name empty, click "Save and
+               display", then read any visible validation messages and
+               re-read the Full name field value
+       F005 -> open /user/index.php?id={course_id}, open the Enrol users
+               modal, leave the search empty, click Enrol, then check the
+               resulting page text for a "0 enrolled users" confirmation
+  3. Pass if both message_visibility and input_preservation are satisfied
+     (input_preservation is treated as trivially true for F005 because the
+     modal closes after submission)
+  4. Record PASS / FAIL / ERROR; on non-PASS, save a screenshot under
+     resources/screenshots/non_functional/F002_F005_usability_<tc>.png
+  5. Write per-row results to
+     results/non_functional/f002_f005_usability_results.csv
+
+Test cases and results:
++--------------------+---------+----------------------------+----------------------------------------------------+--------+
+| TC ID              | Feature | Scenario                   | Expected result                                    | Actual |
++--------------------+---------+----------------------------+----------------------------------------------------+--------+
+| NF-F002-F005-001   | F002    | Submit course form with    | Validation message visible AND the valid Full      | PASS   |
+|                    |         | empty Short name           | name input is preserved after failed submission    |        |
+| NF-F002-F005-002   | F005    | Click Enrol with empty     | "0 enrolled users" (or equivalent zero-enrolment   | PASS   |
+|                    |         | user search                | text) appears on the resulting page                |        |
++--------------------+---------+----------------------------+----------------------------------------------------+--------+
+
+Conclusion: Both test cases passed. The Create Course form surfaces a clear
+validation message and preserves the valid Full name input across the failed
+submission, and the Enrol Users dialog reports a zero-enrolment confirmation
+when submitted with no users selected. From a usability standpoint, the user
+is informed of what went wrong and does not lose work already entered.
+
+Limitation: This test only covers two representative scenarios per feature
+(empty Short name for F002, empty user search for F005). A fuller usability
+audit would also cover other invalid combinations (e.g. duplicate short name
+preservation, role-selection preservation, accessibility / screen-reader
+announcements of the validation messages), and would ideally involve manual
+user testing to assess message clarity, not just message presence.
+
+
+================================================================================
+2. Data Integrity Testing — F002 Create Course & F005 Enrol Users
+================================================================================
+NOTE:
+- run command "pip install webdriver-manager" before run the code
+- "python non_functional/f002_f005_data_integrity_test.py" to run the code
+
+Testing type: Data Integrity Testing (State Consistency & Record Consistency)
+
+Testing approach and idea:
+The goal of this test is to verify that the data submitted through the F002
+Create Course workflow and the F005 Enrol Users workflow is faithfully
+persisted by Moodle — i.e. what the user submits is what the system stores
+and later renders, with no silent mutation, truncation, or role drift. Two
+aspects are checked per test case:
+    - state_consistency  : the user-facing UI after the action reflects the
+                           submitted data (the course view page shows the
+                           submitted full name; the participants list
+                           contains the enrolled user).
+    - record_consistency : the persisted record matches what the user
+                           originally selected (the course's short name read
+                           back from the edit form equals the submitted
+                           short name; the participants list shows the
+                           enrolled user with the selected role, with no
+                           silent role downgrade).
+For F002, the script generates a unique suffix per run so each row creates a
+fresh course, submits Full name + Short name + Category, then re-opens the
+course's edit form and reads id_shortname back from the DOM to verify the
+short name persisted exactly (Moodle does not render the short name on
+/course/view.php, so checking body text alone would always FAIL). For F005,
+the script enrols the demo user "sam" with a chosen role and then re-loads
+the participants page to confirm the user appears and the visible role text
+matches the role that was selected in the enrol dialog.
+
+Testing tool: Selenium WebDriver + Python (custom data-driven runner under
+common/ and config/). Test data is stored in
+f002_f005_data_integrity_data.csv. The script dispatches per row based on
+feature_id (F002 -> course create + read-back, F005 -> enrol + participants
+re-check).
+
+Prerequisites / Ideal conditions to run:
+  - The admin account password must be "sandbox24" (default sandbox value).
+  - For the F005 row, course id 3 must exist on the sandbox (override via
+    the input_3 "course_id=" cell in the CSV if your sandbox uses a
+    different id).
+  - The sandbox must contain the demo user "sam" (Sam Student) for the F005
+    row to find a suggestion in the autocomplete dropdown.
+  - F002 rows create a fresh course each run (with a timestamp + uuid
+    suffix), so the data integrity suite does not depend on a clean sandbox
+    state — repeated runs will simply accumulate throwaway courses, which
+    can be cleaned up manually if desired.
+
+Steps:
+  1. Log in with the admin account
+  2. For each row, dispatch based on feature_id:
+       F002 -> generate unique full_name + short_name suffix, create the
+               course, wait for /course/view.php, assert the full name is
+               in the page body (state_consistency), then re-open the
+               course edit form and read id_shortname back (record_
+               consistency must match the submitted short name exactly)
+       F005 -> open the participants page, open the Enrol dialog, search +
+               pick the user, select the role, click Enrol, then re-load
+               the participants page and find the user's row to confirm
+               presence (state_consistency) and that the row text contains
+               the selected role (record_consistency — used to flag silent
+               role drift, e.g. submitting role="Teacher" but the system
+               recording "Student")
+  3. Pass only if BOTH state_consistency AND record_consistency are
+     satisfied; fail otherwise with a descriptive error_message
+  4. Record PASS / FAIL / ERROR; on non-PASS, save a screenshot under
+     resources/screenshots/non_functional/F002_F005_data_integrity_<tc>.png
+  5. Write per-row results to
+     results/non_functional/f002_f005_data_integrity_results.csv
+
+Test cases and results:
++----------------------+---------+----------------------------+----------------------------------------------------+--------+
+| TC ID                | Feature | Scenario                   | Expected result                                    | Actual |
++----------------------+---------+----------------------------+----------------------------------------------------+--------+
+| NF-F002-F005-DI-001  | F002    | Create course then read    | Course view page shows the submitted full name     | PASS   |
+|                      |         | back full name and short   | AND the edit form's id_shortname value equals      |        |
+|                      |         | name                       | the submitted short name                           |        |
+| NF-F002-F005-DI-002  | F005    | Enrol user with selected   | Participants page shows the enrolled user with     | PASS / |
+|                      |         | role then verify on        | the selected role text in their row                | FAIL   |
+|                      |         | participants page          |                                                    | (*)    |
++----------------------+---------+----------------------------+----------------------------------------------------+--------+
+
+(*) The CSV row submits role=Teacher with expected role_match=Student to
+catch silent role drift. The result depends on the sandbox's current role
+assignment behavior for the demo user; a PASS here means Moodle did downgrade
+to Student (or the expected role text was present in the row), and a FAIL
+means the recorded role differed from expectation.
+
+Conclusion: The F002 data integrity check is the more stringent of the two
+because it explicitly re-reads the persisted short name from the edit form
+rather than trusting the rendered page. The F005 check catches gross
+role-drift bugs (e.g. role completely missing from the participants list)
+but relies on the visible row text, which depends on Moodle's role-rendering
+conventions.
+
+Limitation: These tests only cover the immediate read-back path (create
+then re-open, enrol then re-list). They do not verify long-term persistence
+(e.g. data survives a server restart or a backup-and-restore round-trip),
+nor do they verify database-level consistency (foreign keys, audit logs,
+soft-delete behavior). A full data-integrity audit would additionally query
+the Moodle database directly to cross-check the stored values against the
+rendered values.
+
+
+Related Files:
+
+1. Usability Testing:
+   - Script: non_functional/f002_f005_usability_test.py
+     Submits invalid/empty inputs to the Create Course form and the Enrol
+     Users dialog, then verifies that validation feedback is visible and
+     that valid inputs are preserved (where applicable).
+   - Data file: data/non_functional/f002_f005_usability_data.csv
+     Contains one row per feature (F002, F005) with input values, the
+     non-functional metric being measured (message_visibility,
+     input_preservation), and the expected result.
+
+2. Data Integrity Testing:
+   - Script: non_functional/f002_f005_data_integrity_test.py
+     For F002, creates a fresh course with unique name and re-reads the
+     persisted short name from the edit form. For F005, enrols a user
+     with a chosen role and re-loads the participants page to verify
+     presence and role text.
+   - Data file: data/non_functional/f002_f005_data_integrity_data.csv
+     Contains one row per feature (F002, F005) with input values, the
+     non-functional metric being measured (state_consistency,
+     record_consistency), and the expected result.

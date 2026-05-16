@@ -1,3 +1,13 @@
-tc_id,step_id,page_url,locator_type,locator_value,action_type,input_value,expected_result
-TC001,1,/course/edit.php,,,open,,
-TC001,2,,css,.page-header,verify_text,,New course
+field_name,locator_type,locator_value
+site_url,url,https://sandbox.moodledemo.net/
+login_url,url,https://sandbox.moodledemo.net/login/index.php
+new_course_url,url,https://sandbox.moodledemo.net/course/edit.php?category=1
+login_username,id,username
+login_password,id,password
+login_submit,id,loginbtn
+fullname,id,id_fullname
+shortname,id,id_shortname
+idnumber,id,id_idnumber
+category,id,id_category
+save_display,id,id_saveanddisplay
+cancel,id,id_cancel

@@ -1,3 +1,32 @@
-tc_id,step_id,page_url,locator_type,locator_value,action_type,input_value,expected_result
-TC001,1,/enrol/users.php,,,open,,
-TC001,2,,css,.page-header,verify_text,,Enrolled users
+field_name,locator_type,locator_value
+site_url,url,https://sandbox.moodledemo.net/
+login_url,url,https://sandbox.moodledemo.net/login/index.php
+new_course_url,url,https://sandbox.moodledemo.net/course/edit.php?category=1
+participants_url,url,https://sandbox.moodledemo.net/user/index.php?id={COURSE_ID}
+enrolment_methods_url,url,https://sandbox.moodledemo.net/enrol/instances.php?id={COURSE_ID}
+login_username,id,username
+login_password,id,password
+login_submit,id,loginbtn
+new_course_fullname,id,id_fullname
+new_course_shortname,id,id_shortname
+new_course_save,id,id_saveanddisplay
+open_enrol_modal,css,"input[type='submit'][value='Enrol users'], input[type='submit'][value='Enroll users'], button[data-action='enrol'], button[data-action='enroll']"
+modal_content,css,.modal-content
+user_search,css,".modal-body input[placeholder='Search'], .form-autocomplete-input input[type='text']"
+user_search_first_option,css,".form-autocomplete-suggestions li, .form-autocomplete-suggestions [role='option']"
+role_select,id,id_roletoassign
+modal_submit,css,".modal-footer button[data-action='save'], .modal-footer .btn-primary"
+more_toggler,css,a.moreless-toggler[aria-controls='form-advanced-div']
+startdate,id,id_startdate
+duration,id,id_duration
+timeend_enabled,id,id_timeend_enabled
+timeend_year,id,id_timeend_year
+participants_filter,css,"input[name='search'], input[placeholder*='Search']"
+participants_row,xpath,"//*[@id='participants']/tbody/tr[starts-with(@id, 'user-index-participants-')]"
+unenrol_link,css,"a[data-action='unenrol'], a.unenrollink"
+unenrol_confirm,xpath,//button[normalize-space()='Unenrol' or normalize-space()='Continue']
+self_enrol_edit_link,xpath,"//tr[.//td[contains(., 'Self enrolment')]]//a[contains(@href, 'edit.php') or contains(@title, 'Edit')]"
+add_method_select,id,id_jump
+self_enrol_password,id,id_password
+self_enrol_unmask,css,a[data-passwordunmask='edit']
+self_enrol_submit,id,id_submitbutton
