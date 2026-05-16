@@ -1,6 +1,6 @@
 import os
 import time
-
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select, WebDriverWait
 
@@ -114,4 +114,65 @@ def run_data_driven_steps(driver, rows: list[dict]) -> list[dict]:
             }
         )
 
+    return results
+
+def run_moodle_robust_steps(driver, rows: list[dict]) -> list[dict]:
+    results = []
+    for row in rows:
+        tc_id, step_id = row.get("tc_id", "").strip(), row.get("step_id", "").strip()
+        if not tc_id: continue
+        
+        expected = row.get("expected_result", "").strip()
+        action_type = row.get("action_type", "").strip().lower()
+        locator_type = row.get("locator_type", "").strip().lower()
+        locator_value = row.get("locator_value", "").strip()
+        input_value = str(row.get("input_value", ""))
+
+        actual, status, error_message, screenshot_path = "", "PASS", "", ""
+
+        try:
+            if action_type == "open":
+                driver.get(_build_url(row.get("page_url", "")))
+                actual = "OPENED"
+            elif action_type == "wait":
+                time.sleep(float(input_value or 2))
+                actual = "WAITED"
+            elif action_type == "verify_visible":
+                by = By.CLASS_NAME if locator_type == "class" else get_by(locator_type)
+                try:
+                    element = WebDriverWait(driver, 5).until(EC.presence_of_element_located((by, locator_value)))
+                    actual = "VISIBLE" if element.is_displayed() else "HIDDEN"
+                except:
+                    actual = "HIDDEN"
+                
+                if actual != expected: status = "FAIL"
+            else:
+                by = By.CLASS_NAME if locator_type == "class" else get_by(locator_type)
+                element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((by, locator_value)))
+                driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+
+                if action_type == "type":
+                    element.clear(); element.send_keys(input_value); actual = "TYPED"
+                elif action_type == "click":
+                    driver.execute_script("arguments[0].click(); arguments[0].dispatchEvent(new Event('change', {bubbles:true}));", element)
+                    actual = "CLICKED"; time.sleep(0.8)
+                elif action_type == "select":
+                    WebDriverWait(driver, 5).until(lambda d: element.is_enabled())
+                    Select(element).select_by_visible_text(input_value); actual = "SELECTED"
+                elif action_type == "verify_text":
+                    WebDriverWait(driver, 5).until(lambda d: element.text.strip() != "")
+                    actual = element.text.strip()
+                    if expected not in actual: status = "FAIL"
+
+        except Exception as exc:
+            status, actual, error_message = "ERROR", "ERROR", str(exc)
+
+        if status != "PASS":
+            screenshot_path = save_screenshot(driver, SCREENSHOT_DIR, f"{tc_id}_{step_id}")
+
+        results.append({
+            "tc_id": tc_id, "step_id": step_id, "expected_result": expected,
+            "actual_result": actual, "status": status, "screenshot_path": screenshot_path,
+            "error_message": error_message,
+        })
     return results
