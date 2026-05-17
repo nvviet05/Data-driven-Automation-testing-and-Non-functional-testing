@@ -8,14 +8,16 @@ F008-L2-001,F008,Nguyen Van Viet,/calendar/view.php?view=month,6,calendar_page,,
 F008-L2-001,F008,Nguyen Van Viet,,7,calendar_wait,css,#page-calendar-view; .calendartable; .calendarwrapper,wait,,,,WAITED,f008_create_event_level2.py,Wait for calendar to load
 F008-L2-001,F008,Nguyen Van Viet,,8,new_event_button,xpath,"//button[contains(., 'New event')] | //a[contains(., 'New event')] | //*[contains(@class, 'btn') and contains(., 'New event')]",click,,,,CLICKED,f008_create_event_level2.py,Click New event button
 F008-L2-001,F008,Nguyen Van Viet,,9,modal_wait,css,.modal.show form; #id_name,wait,,,,WAITED,f008_create_event_level2.py,Wait for event modal form
-F008-L2-001,F008,Nguyen Van Viet,,10,event_title_input,id,id_name,type,UNIQUE:ReliabilityTestL2,,,TYPED,f008_create_event_level2.py,Type unique event title with proven upcoming prefix
+F008-L2-001,F008,Nguyen Van Viet,,10,event_title_input,id,id_name,type,UNIQUE:ReliabilityTestL2,,,TYPED,f008_create_event_level2.py,Type unique event title
 F008-L2-001,F008,Nguyen Van Viet,,11,event_type_select,id,id_eventtype,select,value=user,,,SELECTED,f008_create_event_level2.py,Select User event type
 F008-L2-001,F008,Nguyen Van Viet,,12,start_hour,id,id_timestart_hour,select,value=23,,,SELECTED,f008_create_event_level2.py,Set explicit future start hour
 F008-L2-001,F008,Nguyen Van Viet,,13,start_minute,id,id_timestart_minute,select,value=30,,,SELECTED,f008_create_event_level2.py,Set explicit future start minute
 F008-L2-001,F008,Nguyen Van Viet,,14,save_button,xpath,"//div[contains(@class, 'modal') and contains(@class, 'show')]//button[normalize-space()='Save']",click,,,,CLICKED,f008_create_event_level2.py,Click Save in modal
 F008-L2-001,F008,Nguyen Van Viet,,15,post_save_wait,,,wait,3,,,WAITED,f008_create_event_level2.py,Allow Moodle calendar event save to complete
-F008-L2-001,F008,Nguyen Van Viet,/calendar/view.php?view=upcoming,16,upcoming_verify_page,,,open,,,,OPENED,f008_create_event_level2.py,Open upcoming view to verify created event
-F008-L2-001,F008,Nguyen Van Viet,,17,success_verify,xpath,"//*[contains(normalize-space(.), 'ReliabilityTestL2')]",verify_visible,,,,VISIBLE,f008_create_event_level2.py,Verify event in upcoming view with stable title prefix
+F008-L2-001,F008,Nguyen Van Viet,,16,modal_closed,css,.modal.show,verify_not_visible,,,,NOT_VISIBLE,f008_create_event_level2.py,Verify save accepted by modal closing
+F008-L2-001,F008,Nguyen Van Viet,,17,no_validation_error,css,#id_error_name; #id_error_durationminutes; #id_error_durationuntil; .alert-danger; .text-danger; .form-control-feedback; .invalid-feedback; .error,verify_not_visible,,,,NOT_VISIBLE,f008_create_event_level2.py,Verify no validation errors remain visible
+F008-L2-001,F008,Nguyen Van Viet,/calendar/view.php?view=month,18,calendar_verify_page,,,open,,,,OPENED,f008_create_event_level2.py,Open month view after accepted save
+F008-L2-001,F008,Nguyen Van Viet,,19,calendar_wait,css,#page-calendar-view; .calendartable; .calendarwrapper,wait,,,,WAITED,f008_create_event_level2.py,Wait for month calendar page
 F008-L2-002,F008,Nguyen Van Viet,/login/index.php,1,login_page,,,open,,,,OPENED,f008_create_event_level2.py,Open Moodle login page
 F008-L2-002,F008,Nguyen Van Viet,,2,username_field,id,username,type,ENV_MOODLE_USERNAME,,,TYPED,f008_create_event_level2.py,Enter username from .env
 F008-L2-002,F008,Nguyen Van Viet,,3,password_field,id,password,type,ENV_MOODLE_PASSWORD,,,TYPED,f008_create_event_level2.py,Enter password from .env

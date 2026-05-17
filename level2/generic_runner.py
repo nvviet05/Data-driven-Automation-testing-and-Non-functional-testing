@@ -165,6 +165,39 @@ def _verify_visible_with_retries(driver, locator_type: str, locator_value: str, 
     )
 
 
+def _verify_not_visible_with_retries(driver, locator_type: str, locator_value: str, retry_url: str = ""):
+    by = get_by(locator_type)
+    errors = []
+
+    for attempt in range(1, VERIFY_RETRY_COUNT + 1):
+        try:
+            _restore_login_session(driver, retry_url)
+            visible_candidates = []
+
+            for candidate in _locator_candidates(locator_type, locator_value):
+                elements = driver.find_elements(by, candidate)
+                visible_count = sum(1 for element in elements if element.is_displayed())
+                if visible_count:
+                    visible_candidates.append(f"{candidate} ({visible_count} visible)")
+
+            if not visible_candidates:
+                return "NOT_VISIBLE"
+
+            errors.append(
+                f"attempt {attempt}: still visible: {', '.join(visible_candidates)}"
+            )
+        except Exception as exc:
+            errors.append(f"attempt {attempt}: {exc}")
+
+        if attempt < VERIFY_RETRY_COUNT:
+            time.sleep(VERIFY_RETRY_DELAY_SECONDS)
+
+    raise RuntimeError(
+        "Verification target was still visible after "
+        f"{VERIFY_RETRY_COUNT} attempts. Last error: {errors[-1]}"
+    )
+
+
 def _verify_text_with_retries(
     driver, locator_type: str, locator_value: str, expected: str, retry_url: str = ""
 ) -> str:
@@ -294,6 +327,10 @@ def run_data_driven_steps(driver, rows: list[dict]) -> list[dict]:
                     actual = "VISIBLE" if element.is_displayed() else "HIDDEN"
                     if not element.is_displayed():
                         status = "FAIL"
+                elif action_type == "verify_not_visible":
+                    actual = _verify_not_visible_with_retries(
+                        driver, locator_type, locator_value, current_page_url
+                    )
                 else:
                     if action_type == "type":
                         element = _find_element(driver, locator_type, locator_value)
@@ -317,7 +354,7 @@ def run_data_driven_steps(driver, rows: list[dict]) -> list[dict]:
                     else:
                         raise ValueError(f"Unsupported action_type: {action_type}")
 
-            if expected and expected in {"OPENED", "WAITED", "TYPED", "CLICKED", "SELECTED", "UPLOADED", "VISIBLE"}:
+            if expected and expected in {"OPENED", "WAITED", "TYPED", "CLICKED", "SELECTED", "UPLOADED", "VISIBLE", "NOT_VISIBLE"}:
                 if actual != expected:
                     status = "FAIL"
 
