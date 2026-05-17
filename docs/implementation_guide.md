@@ -138,7 +138,6 @@ Do not include these files or folders in the final submission ZIP:
 - `__pycache__/`
 - `*.pyc`
 - `.pytest_cache/`
-- `.claude/`
 
 Include these items in the final submission ZIP:
 
