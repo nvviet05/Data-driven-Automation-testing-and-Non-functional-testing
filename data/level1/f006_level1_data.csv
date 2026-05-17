@@ -1,3 +1,21 @@
-tc_id,description,input_value,expected_result
-TC001,Submit assignment file,submission=sample.pdf,Submission successful
-TC002,Submit without file,submission=,Submission error
+tc_id,name,allow_day,allow_month,allow_year,expected_result
+TC-006-001,Future_Assign_1,1,January,2031,BUTTON_HIDDEN
+TC-006-002,Past_Assign_1,1,January,2023,BUTTON_VISIBLE
+TC-006-003,Future_Assign_2,15,June,2030,BUTTON_HIDDEN
+TC-006-004,Past_Assign_2,20,May,2022,BUTTON_VISIBLE
+TC-006-005,Future_Assign_3,31,December,2029,BUTTON_HIDDEN
+TC-006-006,Current_Year_Assign,1,August,2024,BUTTON_VISIBLE
+TC-006-007,Far_Future_Assign,1,January,2040,BUTTON_HIDDEN
+TC-006-008,Feb_Future_Assign,28,February,2031,BUTTON_HIDDEN
+TC-006-009,Sept_Past_Assign,15,September,2023,BUTTON_VISIBLE
+TC-006-010,Oct_Future_Assign,10,October,2035,BUTTON_HIDDEN
+TC-006-011,Nov_Past_Assign,11,November,2022,BUTTON_VISIBLE
+TC-006-012,Dec_Future_Assign,25,December,2030,BUTTON_HIDDEN
+TC-006-013,Jan_Past_Assign,5,January,2024,BUTTON_VISIBLE
+TC-006-014,May_Future_Assign,16,May,2032,BUTTON_HIDDEN
+TC-006-015,April_Past_Assign,30,April,2023,BUTTON_VISIBLE
+TC-006-016,March_Future_Assign,12,March,2031,BUTTON_HIDDEN
+TC-006-017,July_Past_Assign,4,July,2022,BUTTON_VISIBLE
+TC-006-018,Aug_Future_Assign,20,August,2033,BUTTON_HIDDEN
+TC-006-019,Nov_Future_Assign,1,November,2031,BUTTON_HIDDEN
+TC-006-020,Final_Past_Test,1,December,2023,BUTTON_VISIBLE

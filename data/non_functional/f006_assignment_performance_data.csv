@@ -1,0 +1,2 @@
+tc_id,assignment_name,threshold_seconds,description
+TC-PF-001,Perf_OnlineText_Only,5.0,Measuring latency for pure text submission

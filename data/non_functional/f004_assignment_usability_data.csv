@@ -1,3 +1,2 @@
-tc_id,member,feature_id,non_functional_type,requirement,page_url,input_1,input_2,input_3,metric,threshold,expected_result,notes
-NF-F004-001,Vo Cao Nhat Minh,F004,Usability,Assignment validation and recovery.,/course/modedit.php,TODO_LOCATOR_ASSIGNMENT_NAME,TODO_TEST_DATA_BLANK_NAME,TODO_LOCATOR_VALIDATION_MESSAGE,message_visibility; recovery_success,clear validation messages shown and corrected submission succeeds,Assignment name validation is visible and recovery works,Placeholder for create assignment validation
-NF-F004-002,Vo Cao Nhat Minh,F004,Usability,Assignment validation and recovery.,/course/modedit.php,TODO_LOCATOR_DUE_DATE,TODO_TEST_DATA_INVALID_DATE,TODO_LOCATOR_SAVE_BUTTON,message_visibility; recovery_success,clear validation messages shown and corrected submission succeeds,Invalid date shows message and corrected save succeeds,Replace with real date controls
+tc_id,page_url,min_expected_score,description
+TC-US-001,https://gr13vou5.moodlecloud.com/course/modedit.php?add=assign&type&course=9&sectionid=34,75,Assignment Creation Form
