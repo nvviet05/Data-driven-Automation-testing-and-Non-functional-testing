@@ -1,0 +1,19 @@
+F004 - Non-functional Type: Usability Testing (Form Accessibility & Input Association).
+Requirement: To ensure ease of navigation and accessibility, every interactive input field on the "Create Assignment" form must be programmatically linked to a text label.
+Approach:
+The automated script parses the DOM of the assignment creation form.
+It collects a list of all visible input, select, and textarea elements.
+For every element found, the script searches for a corresponding <label> element whose for attribute matches the input's id.
+The script calculates a "Usability Compliance Score" based on the percentage of fields correctly associated.
+Tool: Python 3.x, Selenium WebDriver.
+
+
+F006 - Non-functional Type: Performance Testing (Response Latency).
+Requirement: The system should process and save an assignment submission within 5.0 seconds.
+Approach:
+The test uses a data-driven approach by reading the threshold and assignment name from a CSV.
+The script simulates a student entering "Online Text."
+A timer starts immediately before the click() event on the "Save changes" button.
+The timer stops once the submissionstatustable (the summary table) is detected on the following page.
+The script calculates the total time and fails if it exceeds the 5-second benchmark.
+Tool: Python 3.x, Selenium, and the standard Python time library.

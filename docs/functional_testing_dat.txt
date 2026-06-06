@@ -1,0 +1,281 @@
+I. Functional Testing
+================================================================================
+1. F002 — Create New Course
+================================================================================
+NOTE:
+- run command "pip install webdriver-manager" before run the code
+- "python level1/f002_create_course_level1.py" to run the code (Level 1)
+- "python level2/f002_create_course_level2.py" to run the code (Level 2)
+- optional: append "--tc-id TC-002-001" to run a single test case
+
+Testing type: Functional Testing (Form Validation)
+
+Testing approach and idea:
+The goal of this test is to verify that the Moodle system correctly handles the
+Create New Course form under various input conditions. The test covers required
+field validation on Full name and Short name, boundary value analysis on field
+lengths (full name up to 254 characters; short name capped at 255 by the
+frontend), duplicate short name detection, optional Course ID number handling,
+category selection, and the Cancel button flow. For long-input cases that the
+frontend would otherwise cap, the script uses a "bypass_maxlength_field" hook
+to strip the HTML maxlength attribute and assign the value via JavaScript so
+the server-side limits can be exercised directly.
+
+Testing tool: Selenium WebDriver + Python (custom data-driven runner under
+common/ and config/). Test data is stored in f002_level1_data.csv. Level 2
+additionally reads URLs and locators from f002_level2_data.csv instead of
+hardcoding them in the script.
+
+Prerequisites / Ideal conditions to run:
+  - The Moodle sandbox should be in a freshly reset state, or all test courses
+    created in previous runs (e.g. SWT101, SWT102, ...) must be manually
+    deleted before re-running, as the duplicate-short-name test case will not
+    behave correctly if leftover courses already exist with conflicting short
+    names.
+  - The manager account password must be "sandbox24" (default sandbox value),
+    matching MOODLE_USERNAME / MOODLE_PASSWORD in config/settings.py.
+  - At least one course category must exist at category index 1 (the default
+    "Miscellaneous" category in a fresh sandbox is sufficient).
+  - Level 1 and Level 2 scripts are independent of each other but share the
+    same test data and target the same sandbox environment. Running Level 1
+    followed by Level 2 without resetting the sandbox (e.g. deleting created
+    courses) may cause test cases to fail due to duplicate short names left
+    over from the Level 1 run.
+
+Steps:
+  1. Log in with the manager account
+  2. Navigate to /course/edit.php?category=1 (New Course form)
+  3. For each test case, fill in the Full name, Short name, Course ID number,
+     and Category fields with the values specified in the data file
+  4. If "bypass_maxlength_field" is set, strip the maxlength attribute on that
+     field and assign the value via JavaScript (used for over-limit BVA cases)
+  5. Click "Save and display" (or "Cancel" if the scenario contains "cancel")
+  6. Check whether the resulting page body text contains the expected result
+     string (e.g. "Announcements" for a created course, "Missing full name"
+     for a validation error, "already used" for a duplicate short name)
+  7. Record PASS / FAIL / ERROR; on non-PASS, save a screenshot under
+     resources/screenshots/<tc_id>.png (Level 1) or <tc_id>_L2.png (Level 2)
+  8. Write per-row results to results/level1/f002_results.csv or
+     results/level2/f002_results.csv
+
+Level 1 vs Level 2:
+  Level 1: All element locators (IDs) and URLs are hardcoded directly in the
+  script.
+  Level 2: URLs and locators are externalized into f002_level2_data.csv. The
+  script reads this config file at runtime and resolves each element
+  dynamically (id / css / xpath / link_text / name), making the test more
+  maintainable and easier to adapt when the UI changes.
+
+Reading the result CSV (results/level1/f002_results.csv or
+                        results/level2/f002_results.csv):
+  The actual_result column does NOT show the literal Moodle response in plain
+  form. Instead it is a raw page-text snippet plus a duration tag, formatted
+  as:
+      <page_text_excerpt> (duration=X.XXs)
+
+  On PASS: the script locates the expected_result string inside the full page
+  body text and extracts the 200-character window surrounding it (up to 30
+  chars before the match and the match plus up to 30 chars after). Because
+  the excerpt is built from the page text, it will always contain the
+  expected_result string, but it will also include other surrounding page
+  content (navigation labels, section headings, etc.). This is normal —
+  the excerpt is evidence confirming where the expected text was found, not
+  a standalone summary of the page.
+
+  On FAIL: the excerpt is taken from the first matching visible error
+  element (.error, .alert-danger, .form-control-feedback), or from the
+  first 120 characters of the page body if no error element is found. The
+  error_message column will repeat this same text for FAILed rows.
+
+  On ERROR: actual_result contains the Python exception type and message
+  (e.g. "TimeoutException: ..."), and a screenshot is saved to
+  resources/screenshots/<tc_id>.png.
+
+  Example rows from an actual run:
+    expected_result = "Announcements"
+    actual_result   = "ware Testing Collapse General Announcements Collapse
+                       New section Collapse (duration=6.00s)"
+    -> PASS. "Announcements" is present inside the excerpt; the surrounding
+       text ("ware Testing Collapse General ... Collapse New section") is
+       just the adjacent page content Moodle renders around that word.
+
+    expected_result = "Missing full name"
+    actual_result   = "eral General Course full name Missing full name Course
+                       short name Course cate (duration=2.55s)"
+    -> PASS. "Missing full name" is the validation error Moodle displays;
+       the surrounding text is other form labels on the same page.
+
+Related Files:
+
+1. Level 1:
+   - Script: level1/f002_create_course_level1.py
+     Runs all test cases for Create New Course with hardcoded locators.
+   - Data file: data/level1/f002_level1_data.csv
+     Contains test cases covering ECP, BVA, decision-table, and UCT scenarios
+     for required fields, boundary lengths, duplicate detection, and the
+     Cancel flow.
+
+2. Level 2:
+   - Script: level2/f002_create_course_level2.py
+     Runs the same test cases as Level 1 but reads URLs and locators from the
+     config file.
+   - Data file: data/level1/f002_level1_data.csv
+     Reused from Level 1 as the main test input data.
+   - Data file: data/level2/f002_level2_data.csv
+     Contains URLs and element locators (field_name, locator_type,
+     locator_value) used by the Level 2 script at runtime.
+
+
+================================================================================
+2. F005 — Enrol Users
+================================================================================
+NOTE:
+- run command "pip install webdriver-manager" before run the code
+- "python level1/f005_enroll_users_level1.py" to run the code (Level 1)
+- "python level2/f005_enroll_users_level2.py" to run the code (Level 2)
+- optional: append "--tc-id TC-005-001" to run a single test case
+- optional: set env var MOODLE_TEST_COURSE_ID=<n> to reuse an existing course
+  instead of creating a fresh one each run
+
+Testing type: Functional Testing (Form Validation + Workflow)
+
+Testing approach and idea:
+The goal of this test is to verify that the Moodle system correctly handles
+manual user enrolment and self-enrolment key configuration under various
+input conditions. The test covers: enrolling an existing user with a valid
+role, searching for a non-existent user, enrolment duration boundary values
+(0, 1, 2, 364, 365 days), end-date-before-start-date validation, self-enrolment
+key length boundaries (0, 1, 49, 50, 51 characters; the 51-character case
+uses a maxlength bypass to exercise the server-side cap), an empty user-search
+check that asserts the modal Enrol button is disabled, and a UCT happy-path
+flow. The action to perform on each row is inferred from the scenario text
+(enroll, search_only, empty_search_check, enable_self_enrol) — there is no
+explicit action column in the CSV.
+
+Testing tool: Selenium WebDriver + Python (custom data-driven runner under
+common/ and config/). Test data is stored in f005_level1_data.csv. Level 2
+additionally reads URLs and locators from f005_level2_data.csv instead of
+hardcoding them in the script.
+
+Prerequisites / Ideal conditions to run:
+  - The manager account password must be "sandbox24" (default sandbox value).
+  - The sandbox must contain the demo user "sam" (Sam Student) — this is the
+    default sandbox user that most enrolment test cases search for.
+  - The script auto-creates a fresh throwaway course at startup so the suite
+    is self-contained; if you prefer to reuse an existing course, set the
+    MOODLE_TEST_COURSE_ID environment variable to that course's numeric id.
+  - Before each "enroll" row, the runner attempts to unenrol the target user
+    from the test course so previously-enrolled state from a prior row does
+    not interfere with the current case.
+  - Level 1 and Level 2 scripts are independent of each other but share the
+    same test data. Each run creates its own throwaway course unless
+    MOODLE_TEST_COURSE_ID is set, so Level 1 and Level 2 do not interfere
+    with each other by default.
+
+Steps:
+  1. Log in with the manager account
+  2. Create a fresh test course (or use MOODLE_TEST_COURSE_ID if set)
+  3. For each test case, infer the action from the scenario text:
+       - "self-enrolment key" -> open Enrolment methods, edit/add Self
+         enrolment, set the key, submit
+       - "search string 0 chars" -> open Enrol dialog with empty search,
+         assert modal Enrol button is disabled
+       - "search ..." -> open Enrol dialog and type the search string only
+       - otherwise -> full enrolment flow (search user, pick suggestion,
+         select role, optionally toggle advanced options for duration / end
+         date, click Enrol)
+  4. Apply advanced options when applicable: duration_days, toggle_end_date,
+     end_date_year. Zero-day duration is expressed by snapping the start
+     date to "Now" because id_duration only accepts 1..365.
+  5. For "bypass_maxlength=enrol_key" rows, strip the maxlength attribute on
+     the self-enrolment key field and assign via JavaScript so the >50-char
+     case can be exercised.
+  6. Check whether the resulting page body text contains the expected result
+     string, or for the empty-search case, that the modal submit button has
+     the disabled attribute ("expected_result=attr:false").
+  7. Record PASS / FAIL / ERROR; on non-PASS, save a screenshot under
+     resources/screenshots/<tc_id>.png (Level 1) or <tc_id>_L2.png (Level 2)
+  8. Write per-row results to results/level1/f005_results.csv or
+     results/level2/f005_results.csv
+
+Level 1 vs Level 2:
+  Level 1: All element locators (IDs, CSS selectors, XPath expressions) and
+  URLs are hardcoded directly in the script.
+  Level 2: URLs and locators are externalized into f005_level2_data.csv,
+  including templated URLs that substitute {COURSE_ID} at runtime. The
+  script reads this config file and resolves each element dynamically,
+  improving maintainability and separation of test logic from UI structure.
+
+Reading the result CSV (results/level1/f005_results.csv or
+                        results/level2/f005_results.csv):
+  The actual_result column does NOT show the literal Moodle response in plain
+  form. Instead it is a raw page-text snippet plus action and duration tags,
+  formatted as:
+      <page_text_excerpt> (action=<inferred_action>; duration=X.XXs)
+
+  The action tag records which branch of logic ran for that row (enroll,
+  search_only, empty_search_check, or enable_self_enrol), which helps trace
+  why a row behaved a certain way.
+
+  Note on duration: "enroll" rows typically show significantly longer
+  durations (8–15 s) than other action types. This is because the runner
+  performs a hidden pre-test cleanup step before every "enroll" row: it
+  navigates to the participants page and unenrolls the target user if they
+  are already enrolled (from a previous test case), so each enrolment test
+  starts from a clean state. The cleanup adds one full participants-page
+  navigation plus a confirmation click, which accounts for most of the
+  extra time. The duration in actual_result therefore reflects both the
+  cleanup and the actual test execution, not just the test action itself.
+
+  On PASS: the script locates the expected_result string inside the full page
+  body text and extracts the 200-character window surrounding it. Because the
+  excerpt is built from the page text, it will always contain the
+  expected_result string, but it also includes the surrounding page content
+  (participant names, table labels, autocomplete suggestions, etc.). For the
+  empty-search case (expected_result=attr:false) the excerpt instead reports
+  whether the modal Enrol button was enabled or disabled, e.g.
+  "button enabled=false (matches attr:false)".
+
+  On FAIL: the excerpt is the first 120 characters of the page body. The
+  error_message column will repeat this same text for FAILed rows.
+
+  On ERROR: actual_result contains the Python exception type and message
+  (e.g. "NoSuchElementException: ..."), and a screenshot is saved to
+  resources/screenshots/<tc_id>.png.
+
+  Example rows from an actual run:
+    expected_result = "Sam Student"
+    actual_result   = "cess to course Status Select 'Sam Student' SS Sam
+                       Student student@moodl (action=enroll; duration=8.32s)"
+    -> PASS. "Sam Student" appears in the participant list excerpt; the rest
+       ("cess to course Status Select ...") is surrounding page text from the
+       participants page.
+
+    expected_result = "No suggestions"
+    actual_result   = "elected items: No selection ▼ No suggestions Assign
+                       role             Manag (action=search_only;
+                       duration=5.11s)"
+    -> PASS. "No suggestions" is the autocomplete message; surrounding text
+       is other elements in the Enrol dialog.
+
+Related Files:
+
+1. Level 1:
+   - Script: level1/f005_enroll_users_level1.py
+     Runs all test cases for Enrol Users with hardcoded locators.
+   - Data file: data/level1/f005_level1_data.csv
+     Contains test cases covering ECP, BVA, decision-table, and UCT
+     scenarios for manual enrolment, search behavior, duration boundaries,
+     end-date validation, and self-enrolment key length.
+
+2. Level 2:
+   - Script: level2/f005_enroll_users_level2.py
+     Runs the same test cases as Level 1 but reads URLs and locators from
+     the config file.
+   - Data file: data/level1/f005_level1_data.csv
+     Reused from Level 1 as the main test input data.
+   - Data file: data/level2/f005_level2_data.csv
+     Contains URLs and element locators (field_name, locator_type,
+     locator_value) used by the Level 2 script at runtime, including
+     {COURSE_ID}-templated URLs for the participants and enrolment-methods
+     pages.

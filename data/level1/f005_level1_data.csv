@@ -1,3 +1,22 @@
-tc_id,description,input_value,expected_result
-TC001,Enroll user to course,username=demo_user,Enrollment successful
-TC002,Enroll missing user,username=unknown_user,Enrollment failed
+tc_id,scenario,technique,user_search,role,duration_days,toggle_end_date,end_date_year,enrol_key,bypass_maxlength,expected_result
+TC-005-001,Enrol existing user with valid role (all valid inputs),ECP,sam,Student,,,,,,Sam Student
+TC-005-002,Search for non-existent user,ECP,ghostuser999,,,,,,,No suggestions
+TC-005-003,Enrol user with valid enrolment duration 30 days,ECP,sam,Student,30,,,,,Sam Student
+TC-005-004,Enrol user with zero enrolment duration,ECP,sam,Student,0,,,,,Sam Student
+TC-005-005,Enrol user with valid end date after start date,ECP,sam,Student,,Y,,,,Sam Student
+TC-005-006,Enrol user with end date before start date (invalid),ECP,sam,Student,,Y,2025,,,Invalid enrolment duration
+TC-005-009,Enrolment duration 1 day (minimum boundary),BVA,sam,Student,1,,,,,Sam Student
+TC-005-010,Enrolment duration 2 days (min+1),BVA,sam,Student,2,,,,,Sam Student
+TC-005-011,Enrolment duration 364 days (max-1),BVA,sam,Student,364,,,,,Sam Student
+TC-005-012,Enrolment duration 365 days (yearly boundary),BVA,sam,Student,365,,,,,Sam Student
+TC-005-013,Self-enrolment key 0 chars (no key optional),BVA,,,,,,,,Enrolment methods
+TC-005-014,Self-enrolment key 1 char (minimum non-empty),BVA,,,,,,A,,Enrolment methods
+TC-005-015,Self-enrolment key 49 chars (max-1),BVA,,,,,,KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK,,Enrolment methods
+TC-005-016,Self-enrolment key 50 chars (maximum boundary),BVA,,,,,,KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK,,Enrolment methods
+TC-005-017,Self-enrolment key 51 chars (above maximum),BVA,,,,,,KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK,enrol_key,Maximum of 50 characters
+TC-005-019,User search string 1 char (minimum meaningful),BVA,s,,,,,,,Sam Student
+TC-005-020,User search does not exist enrolment blocked,DT,nonexistent_xyz999,,,,,,,No suggestions
+TC-005-021,User and Role valid Duration 0,DT,sam,Student,,,,,,Sam Student
+TC-005-022,End date before start date enrolment blocked,DT,sam,Student,,Y,2025,,,Invalid enrolment duration
+TC-005-023,All conditions valid enrolment created successfully,DT,sam,Student,30,,,,,Sam Student
+TC-005-024,Manually enrol user happy path all valid first attempt,UCT,sam,Student,30,,,,,Sam Student

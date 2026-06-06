@@ -1,3 +1,12 @@
-tc_id,step_id,page_url,locator_type,locator_value,action_type,input_value,expected_result
-TC001,1,/admin/user.php,,,open,,
-TC001,2,,css,.page-header,verify_text,,Add a new user
+field_name,locator_type,locator_value
+site_url,url,https://sandbox51.moodledemo.net/
+nav_admin,link_text,Site administration
+nav_users,link_text,Users
+nav_add_user,link_text,Add a new user
+username,id,id_username
+password_unmask,css,a[data-passwordunmask="edit"]
+password,id,id_newpassword
+firstname,id,id_firstname
+lastname,id,id_lastname
+email,id,id_email
+submit,id,id_submitbutton

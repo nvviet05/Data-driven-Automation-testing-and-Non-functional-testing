@@ -1,3 +1,15 @@
-tc_id,step_id,page_url,locator_type,locator_value,action_type,input_value,expected_result
-TC001,1,/mod/assign/view.php,,,open,,
-TC001,2,,css,.page-header,verify_text,,Submission status
+tc_id,step_id,action_type,locator_type,locator_value,page_url,input_value,expected_result
+TC-006-001,S1,open,,,https://gr13vou5.moodlecloud.com/course/modedit.php?add=assign&type&course=9&sectionid=34,,
+TC-006-001,S2,type,id,id_name,,Future_Assign_L2,
+TC-006-001,S3,click,id,id_duedate_enabled,,,
+TC-006-001,S4,click,id,id_gradingduedate_enabled,,,
+TC-006-001,S5,select,id,id_allowsubmissionsfromdate_year,,2031,
+TC-006-001,S6,click,id,id_submitbutton,,,
+TC-006-001,S7,verify_visible,xpath,"//button[contains(.,'Add submission')]",,,HIDDEN
+TC-006-002,S1,open,,,https://gr13vou5.moodlecloud.com/course/modedit.php?add=assign&type&course=9&sectionid=34,,
+TC-006-002,S2,type,id,id_name,,Past_Assign_L2,
+TC-006-002,S3,click,id,id_duedate_enabled,,,
+TC-006-002,S4,click,id,id_gradingduedate_enabled,,,
+TC-006-002,S5,select,id,id_allowsubmissionsfromdate_year,,2023,
+TC-006-002,S6,click,id,id_submitbutton,,,
+TC-006-002,S7,verify_visible,xpath,"//button[contains(.,'Add submission')]",,,VISIBLE

@@ -1,3 +1,6 @@
-tc_id,member,feature_id,non_functional_type,requirement,page_url,input_1,input_2,input_3,metric,threshold,expected_result,notes
-NF-F001-F007-001,Nguyen Gia Hoang,F001/F007,Security,Password field masking and password policy enforcement.,/user/editadvanced.php,TODO_LOCATOR_PASSWORD_FIELD,TODO_TEST_DATA_WEAK_PASSWORD,,field_type; validation_result,password field masked and weak/mismatched passwords rejected,Password input type is password and weak password is rejected,Do not store real passwords in CSV
-NF-F001-F007-002,Nguyen Gia Hoang,F001/F007,Security,Password field masking and password policy enforcement.,/login/change_password.php,TODO_LOCATOR_CONFIRM_PASSWORD,TODO_TEST_DATA_MISMATCHED_PASSWORD,,field_type; validation_result,password field masked and weak/mismatched passwords rejected,Mismatched password confirmation is rejected,Use fake demo account data only
+tc_id,username,password,firstname,lastname,email,expected_result
+SEC001,secuser1,less!1A,John,Doe,sec1@test.com,Passwords must be at least 8 characters long.
+SEC002,secuser2,nouppercase1!,John,Doe,sec2@test.com,Passwords must have at least 1 upper case letter(s).
+SEC003,secuser3,NOLOWERCASE1!,John,Doe,sec3@test.com,Passwords must have at least 1 lower case letter(s).
+SEC004,secuser4,NoDigits!!,John,Doe,sec4@test.com,Passwords must have at least 1 digit(s).
+SEC005,secuser5,NoSpecial11,John,Doe,sec5@test.com,The password must have at least 1 special character(s) such as *, -, or #.

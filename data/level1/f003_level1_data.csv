@@ -1,3 +1,7 @@
-tc_id,description,input_value,expected_result
-TC001,Create quiz with valid name,quiz_name=Quiz 1,Quiz created
-TC002,Create quiz with empty name,quiz_name=,Validation error
+tc_id,feature_id,owner,test_description,pre_condition,course_url,quiz_name,quiz_description,time_limit,attempts_allowed,expected_result,expected_message,should_pass,notes
+F003-L1-001,F003,Nguyen Van Viet,Name length minimum boundary,Logged in and in course,,Q,Minimum name boundary quiz,10,1,Quiz created,,TRUE,Minimum valid quiz name
+F003-L1-002,F003,Nguyen Van Viet,Empty quiz name should fail validation,Logged in and in course,,,Missing name quiz,5,1,Validation error,required,FALSE,Name is mandatory
+F003-L1-003,F003,Nguyen Van Viet,Name length maximum boundary,Logged in and in course,,This Is A Very Long Quiz Name For Boundary Testing Purposes Only,Long name boundary,15,3,Quiz created,,TRUE,Long name boundary
+F003-L1-004,F003,Nguyen Van Viet,Time limit one minute boundary,Logged in and in course,,Quiz Min Time,Minimum time limit quiz,1,1,Quiz created,,TRUE,Minimum valid time limit
+F003-L1-005,F003,Nguyen Van Viet,Time limit zero accepted by current Moodle UI,Logged in and in course,,Quiz Zero Time,Zero time limit quiz,0,1,Quiz created,,TRUE,Current Moodle accepts zero time limit without #id_error_timelimit
+F003-L1-006,F003,Nguyen Van Viet,Attempts allowed zero means unlimited attempts,Logged in and in course,,Quiz Unlimited Attempts,Unlimited attempts quiz,10,0,Quiz created,,TRUE,Moodle treats attempts_allowed=0 as Unlimited

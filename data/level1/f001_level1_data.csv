@@ -1,3 +1,50 @@
-tc_id,description,input_value,expected_result
-TC001,Add user with valid data,username=demo_user,User created
-TC002,Add user with missing email,username=missing_email,Validation error
+tc_id,username,password,firstname,lastname,email,expected_result
+TC-001-001,alice123,Pass123!,Alice,Smith,alice@example.com,alice@example.com
+TC-001-002,,Pass123!,Alice,Smith,alice2@example.com,Required
+TC-001-003,aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,Pass123!,Alice,Smith,alice3@example.com,Error writing to database
+TC-001-004,alice123,Pass123!,Alice,Smith,alice4@example.com,This username already exists, choose another
+TC-001-005,alice!99,Pass123!,Alice,Smith,uct007@example.com,The username can only contain alphanumeric lowercase characters
+TC-001-006,Alice99,Pass123!,Alice,Smith,uct008@example.com,Only lowercase letters allowed
+TC-001-007,ALICE123,Pass123!,Alice,Smith,uct009@example.com,Only lowercase letters allowed
+TC-001-008,bob001,,Alice,Smith,alice5@example.com,Required
+TC-001-009,bob002,Abcdefgh!,Alice,Smith,alice5b@example.com,Passwords must have at least 1 digit(s).
+TC-001-010,bob003,abcdefg1!,Alice,Smith,alice5c@example.com,Passwords must have at least 1 upper case letter(s).
+TC-001-011,bob004,ABCDEFG1!,Alice,Smith,alice5d@example.com,Passwords must have at least 1 lower case letter(s).
+TC-001-012,bob005,Abcdefg1,Alice,Smith,alice5e@example.com,The password must have at least 1 special character(s)
+TC-001-013,bob010,Pass123!,,Smith,alice6@example.com,Required
+TC-001-014,bob011,Pass123!,Alice,,alice7@example.com,Required
+TC-001-015,bob012,Pass123!,Alice,Smith,,Required
+TC-001-016,bob013,Pass123!,Alice,Smith,aliceexample.com,Invalid email address
+TC-001-017,bob014,Pass123!,Alice,Smith,alice@.com,Invalid email address
+TC-001-018,bob015,Pass123!,Alice,Smith,alice@example,Invalid email address
+TC-001-019,bob016,Pass123!,Alice,Smith,@example.com,Invalid email address
+TC-001-020,bob017,Pass123!,Alice,Smith,alice@example.1com,Invalid email address
+TC-001-021,bob018,Pass123!,Alice,Smith,alice@-example.com,Invalid email address
+TC-001-022,bob019,Pass123!,Alice,Smith,alice@example-.com,Invalid email address
+TC-001-023,bob020,Pass123!,Alice,Smith,ali..ce@example.com,Invalid email address
+TC-001-024,bob021,Pass123!,Alice,Smith,.alice@example.com,Invalid email address
+TC-001-025,bob022,Pass123!,Alice,Smith,alice.@example.com,Invalid email address
+TC-001-026,bob023,Pass123!,Alice,Smith,ali ce@example.com,Invalid email address
+TC-001-027,bob024,Pass123!,Alice,Smith,alice@example.com,This email address is already registered.
+TC-001-028,,Pass123!,Alice,Smith,bva001@example.com,Required
+TC-001-029,a,Pass123!,Alice,Smith,bva002@example.com,bva002@example.com
+TC-001-030,ab,Pass123!,Alice,Smith,bva003@example.com,bva003@example.com
+TC-001-031,aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,Pass123!,Alice,Smith,bva004@example.com,bva004@example.com
+TC-001-032,aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,Pass123!,Alice,Smith,bva005@example.com,bva005@example.com
+TC-001-033,aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,Pass123!,Alice,Smith,bva006@example.com,Error writing to database
+TC-001-034,bva007user,,Alice,Smith,bva007@example.com,Required
+TC-001-035,bva008user,Abcde1!,Alice,Smith,bva008@example.com,Passwords must be at least 8 characters long.
+TC-001-036,bva009user,Abcdef1!,Alice,Smith,bva009@example.com,bva009@example.com
+TC-001-037,bva010user,Pass123!,,Smith,bva010@example.com,Required
+TC-001-038,bva011user,Pass123!,A,Smith,bva011@example.com,bva011@example.com
+TC-001-039,bva012user,Pass123!,Al,Smith,bva012@example.com,bva012@example.com
+TC-001-040,bva013user,Pass123!,Alice,,bva013@example.com,Required
+TC-001-041,bva014user,Pass123!,Alice,S,bva014@example.com,bva014@example.com
+TC-001-042,bva015user,Pass123!,Alice,Sm,bva015@example.com,bva015@example.com
+TC-001-043,,Pass123!,Alice,Smith,dt001@example.com,Required
+TC-001-044,dt002user,,Alice,Smith,dt002@example.com,Required
+TC-001-045,dt003user,Pass123!,,Smith,dt003@example.com,Required
+TC-001-046,dt004user,Pass123!,Alice,,dt004@example.com,Required
+TC-001-047,dt005user,Pass123!,Alice,Smith,invalid-email,Invalid email address
+TC-001-048,dt006user,Pass123!,Alice,Smith,dt006@example.com,dt006@example.com
+TC-001-049,uctuser01,Pass123!,Alice,Smith,uct001@example.com,uct001@example.com

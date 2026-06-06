@@ -1,3 +1,23 @@
-tc_id,step_id,page_url,locator_type,locator_value,action_type,input_value,expected_result
-TC001,1,/mod/quiz/edit.php,,,open,,
-TC001,2,,css,.page-header,verify_text,,Editing quiz
+tc_id,feature_id,owner,page_url,step_id,element_role,locator_type,locator_value,action_type,input_value,expected_locator_type,expected_locator_value,expected_result,script_file,notes
+F003-L2-001,F003,Nguyen Van Viet,/login/index.php,1,login_page,,,open,,,,OPENED,f003_create_quiz_level2.py,Open Moodle login page
+F003-L2-001,F003,Nguyen Van Viet,,2,username_field,id,username,type,ENV_MOODLE_USERNAME,,,TYPED,f003_create_quiz_level2.py,Enter username from .env
+F003-L2-001,F003,Nguyen Van Viet,,3,password_field,id,password,type,ENV_MOODLE_PASSWORD,,,TYPED,f003_create_quiz_level2.py,Enter password from .env
+F003-L2-001,F003,Nguyen Van Viet,,4,login_button,id,loginbtn,click,,,,CLICKED,f003_create_quiz_level2.py,Click login button
+F003-L2-001,F003,Nguyen Van Viet,,5,logged_in_check,css,#page-my-index; .usermenu; body.loggedin,wait,,,,WAITED,f003_create_quiz_level2.py,Wait for logged in state
+F003-L2-001,F003,Nguyen Van Viet,/course/modedit.php?add=quiz&course=3&section=1&return=0&sr=0,6,quiz_form_page,,,open,,,,OPENED,f003_create_quiz_level2.py,Open quiz creation form directly
+F003-L2-001,F003,Nguyen Van Viet,,7,quiz_form_wait,css,#id_name,wait,,,,WAITED,f003_create_quiz_level2.py,Wait for quiz name field
+F003-L2-001,F003,Nguyen Van Viet,,8,quiz_name_input,id,id_name,type,UNIQUE:Quiz L2 Valid Test,,,TYPED,f003_create_quiz_level2.py,Type unique quiz name
+F003-L2-001,F003,Nguyen Van Viet,,9,save_button,name,submitbutton2,click,,,,CLICKED,f003_create_quiz_level2.py,Click Save and display
+F003-L2-001,F003,Nguyen Van Viet,/mod/quiz/index.php?id=3,10,quiz_index_page,,,open,,,,OPENED,f003_create_quiz_level2.py,Open quiz index to verify
+F003-L2-001,F003,Nguyen Van Viet,,11,quiz_index_wait,css,#page-mod-quiz-index; table.generaltable; #region-main,wait,,,,WAITED,f003_create_quiz_level2.py,Wait for quiz index page
+F003-L2-001,F003,Nguyen Van Viet,,12,success_verify,xpath,"//*[contains(normalize-space(.), 'Quiz L2 Valid Test')]",verify_visible,,,,VISIBLE,f003_create_quiz_level2.py,Verify quiz appears in index
+F003-L2-002,F003,Nguyen Van Viet,/login/index.php,1,login_page,,,open,,,,OPENED,f003_create_quiz_level2.py,Open Moodle login page
+F003-L2-002,F003,Nguyen Van Viet,,2,username_field,id,username,type,ENV_MOODLE_USERNAME,,,TYPED,f003_create_quiz_level2.py,Enter username from .env
+F003-L2-002,F003,Nguyen Van Viet,,3,password_field,id,password,type,ENV_MOODLE_PASSWORD,,,TYPED,f003_create_quiz_level2.py,Enter password from .env
+F003-L2-002,F003,Nguyen Van Viet,,4,login_button,id,loginbtn,click,,,,CLICKED,f003_create_quiz_level2.py,Click login button
+F003-L2-002,F003,Nguyen Van Viet,,5,logged_in_check,css,#page-my-index; .usermenu; body.loggedin,wait,,,,WAITED,f003_create_quiz_level2.py,Wait for logged in state
+F003-L2-002,F003,Nguyen Van Viet,/course/modedit.php?add=quiz&course=3&section=1&return=0&sr=0,6,quiz_form_page,,,open,,,,OPENED,f003_create_quiz_level2.py,Open quiz creation form directly
+F003-L2-002,F003,Nguyen Van Viet,,7,quiz_form_wait,css,#id_name,wait,,,,WAITED,f003_create_quiz_level2.py,Wait for quiz name field
+F003-L2-002,F003,Nguyen Van Viet,,8,quiz_name_input,id,id_name,type,,,,TYPED,f003_create_quiz_level2.py,Leave quiz name empty for negative test
+F003-L2-002,F003,Nguyen Van Viet,,9,save_button,name,submitbutton2,click,,,,CLICKED,f003_create_quiz_level2.py,Click Save and display
+F003-L2-002,F003,Nguyen Van Viet,,10,error_verify,css,#id_error_name; .invalid-feedback; .error,verify_visible,,,,VISIBLE,f003_create_quiz_level2.py,Verify validation error shown

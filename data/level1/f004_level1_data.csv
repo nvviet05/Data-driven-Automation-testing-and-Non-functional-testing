@@ -1,3 +1,26 @@
-tc_id,description,input_value,expected_result
-TC001,Create assignment with valid title,assignment_title=Assignment 1,Assignment created
-TC002,Create assignment with empty title,assignment_title=,Validation error
+tc_id,name,allow_enabled,allow_day,allow_month,allow_year,due_enabled,due_day,due_month,due_year,cutoff_enabled,cutoff_day,cutoff_month,cutoff_year,word_limit_enabled,word_limit_val,expected_result
+TC-004-001,As1,yes,21,April,2026,yes,20,April,2026,no,,,,no,,Due date must be after the allow submissions from date.
+TC-004-002,As1,yes,20,April,2026,yes,21,April,2026,no,,,,no,,SUCCESS
+TC-004-003,As1,no,,,2013,yes,21,April,2026,yes,20,April,2026,no,,Cut-off date cannot be earlier than the due date.
+TC-004-004,As1,no,,,2013,yes,20,April,2026,yes,21,April,2026,no,,SUCCESS
+TC-004-005,As1,no,,,,no,,,,no,,,yes,10,SUCCESS
+TC-004-006,As1,no,,,,no,,,,no,,,yes,aaa,You must enter a number here.
+TC-004-007,As1,yes,21,April,2026,yes,20,April,2026,no,,,,no,,Due date must be after the allow submissions from date.
+TC-004-008,As1,yes,21,April,2026,yes,21,April,2026,no,,,,no,,Due date must be after the allow submissions from date.
+TC-004-009,As1,yes,21,April,2026,yes,21,April,2026,no,,,,no,,Due date must be after the allow submissions from date.
+TC-004-010,As1,no,,,2009,yes,21,April,2026,yes,21,April,2026,no,,SUCCESS
+TC-004-011,As1,no,,,2009,yes,21,April,2026,yes,21,April,2026,no,,SUCCESS
+TC-004-012,As1,no,,,2008,yes,21,April,2026,yes,21,April,2026,no,,SUCCESS
+TC-004-013,As1,no,,,,no,,,,no,,,no,,SUCCESS
+TC-004-014,As1,no,,,,no,,,,no,,,no,,SUCCESS
+TC-004-015,As1,no,,,,no,,,,no,,,no,,SUCCESS
+TC-004-016,As1,no,,,,no,,,,no,,,no,,SUCCESS
+TC-004-017,As1,no,,,,no,,,,no,,,yes,1,SUCCESS
+TC-004-018,As1,no,,,,no,,,,no,,,yes,999999,SUCCESS
+TC-004-019,As1,no,,,,no,,,,no,,,yes,0,SUCCESS
+TC-004-020,As1,no,,,,no,,,,no,,,yes,-1,You must enter a number here.
+TC-004-021,As1,yes,20,April,2026,yes,21,April,2026,yes,22,April,2026,yes,10,SUCCESS
+TC-004-022,As1,yes,20,April,2026,yes,21,April,2026,yes,22,April,2026,yes,10,SUCCESS
+TC-004-023,As1,yes,20,April,2026,yes,21,April,2026,yes,22,April,2026,yes,10,SUCCESS
+TC-004-024,As1,yes,20,April,2026,no,,,,yes,22,April,2026,no,,SUCCESS
+TC-004-025,As1,yes,20,April,2026,yes,21,April,2026,no,,,,no,,SUCCESS
